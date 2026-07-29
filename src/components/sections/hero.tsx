@@ -42,7 +42,7 @@ export function Hero() {
         style={{ y: imageY, x: pointer.x * -18 }}
         className="absolute inset-0 -z-30 h-[115%] w-[104%] object-cover"
       />
-      <div className="gradient-hero animate-gradient absolute inset-0 -z-20 opacity-55" />
+      <div className="gradient-hero animate-gradient absolute inset-0 -z-20 opacity-30" />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-background to-transparent" />
 
       {/* floating decorative layers */}
