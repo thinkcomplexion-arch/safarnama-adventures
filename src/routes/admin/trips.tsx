@@ -33,7 +33,7 @@ function TripsPage() {
   <Plus size={18} />
   Create Trip
 </button>
-
+        </div>
         {/* Search */}
         <div className="rounded-2xl border bg-card p-5 shadow-sm">
           <div className="relative">
