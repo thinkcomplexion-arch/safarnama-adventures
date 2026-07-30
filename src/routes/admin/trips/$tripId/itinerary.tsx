@@ -68,7 +68,19 @@ useEffect(() => {
 
         {/* Add Button */}
 
-        <button className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-primary-foreground shadow-lg">
+        <button
+  onClick={async () => {
+    await addItineraryDay(tripId, {
+      day: days.length + 1,
+      coverImage: "",
+      sections: [],
+    });
+
+    const data = await getItinerary(tripId);
+    setDays(data);
+  }}
+  className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-primary-foreground shadow-lg"
+>
 
           <Plus size={20} />
 
