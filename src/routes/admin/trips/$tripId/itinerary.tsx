@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { useEffect, useState } from "react";
+import {
+  getItinerary,
+  type ItineraryDay,
+} from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/trips/$tripId/itinerary")({
@@ -8,10 +13,38 @@ export const Route = createFileRoute("/admin/trips/$tripId/itinerary")({
 
 function ItineraryPage() {
   const { tripId } = Route.useParams();
+const [days, setDays] = useState<ItineraryDay[]>([]);
+const [loading, setLoading] = useState(true);
 
+useEffect(() => {
+  async function load() {
+    try {
+      const data = await getItinerary(tripId);
+      setDays(data);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  load();
+}, [tripId]);
+
+  
   return (
     <AdminLayout>
       <div className="space-y-8">
+
+        {loading ? (
+  <div className="rounded-2xl border p-6">
+    Loading itinerary...
+  </div>
+) : (
+  <div className="rounded-2xl border p-6">
+    <h2 className="text-xl font-bold">
+      Days Loaded: {days.length}
+    </h2>
+  </div>
+)}
 
         {/* Hero */}
         <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600 p-10 text-white shadow-xl">
