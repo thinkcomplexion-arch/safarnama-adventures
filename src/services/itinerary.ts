@@ -11,12 +11,30 @@ import {
 
 import { db } from "@/lib/firebase";
 
+export interface ItinerarySection {
+  id: string;
+  type:
+    | "description"
+    | "gallery"
+    | "places"
+    | "meals"
+    | "stay"
+    | "transport"
+    | "tips"
+    | "highlights"
+    | "timings"
+    | "custom";
+
+  title?: string;
+  content?: string;
+  images?: string[];
+}
+
 export interface ItineraryDay {
   id?: string;
   day: number;
-  title: string;
-  description: string;
-  image: string;
+  coverImage: string;
+  sections: ItinerarySection[];
 }
 
 export async function getItinerary(tripId: string) {
