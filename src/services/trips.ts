@@ -22,8 +22,9 @@ export interface Trip {
   price: number;
   duration: string;
   difficulty: string;
+  season: string;
+  image: string;
   status: TripStatus;
-  image?: string;
 
   createdAt?: unknown;
   updatedAt?: unknown;
