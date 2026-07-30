@@ -1,4 +1,8 @@
 import { X } from "lucide-react";
+import { useState } from "react";
+import { db } from "@/lib/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { toast } from "sonner";
 
 interface CreateTripDrawerProps {
   open: boolean;
@@ -9,145 +13,244 @@ export function CreateTripDrawer({
   open,
   onClose,
 }: CreateTripDrawerProps) {
+
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    title: "",
+    location: "",
+    price: "",
+    duration: "",
+    season: "",
+    description: "",
+    status: "draft",
+  });
+
+
+  const updateField = (
+    field: string,
+    value: string
+  ) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+
+  const handleSave = async () => {
+
+    if (!form.title || !form.location) {
+      toast.error("Title and location are required");
+      return;
+    }
+
+
+    try {
+
+      setLoading(true);
+
+
+      await addDoc(collection(db, "trips"), {
+
+        title: form.title,
+
+        location: form.location,
+
+        price: Number(form.price),
+
+        duration: form.duration,
+
+        season: form.season,
+
+        description: form.description,
+
+        status: form.status,
+
+        createdAt: serverTimestamp(),
+
+      });
+
+
+      toast.success("Trip created successfully 🎉");
+
+
+      setForm({
+        title: "",
+        location: "",
+        price: "",
+        duration: "",
+        season: "",
+        description: "",
+        status: "draft",
+      });
+
+
+      onClose();
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error("Failed to create trip");
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+
   if (!open) return null;
+
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* Overlay */}
+
       <div
         className="absolute inset-0 bg-black/40"
         onClick={onClose}
       />
 
-      {/* Drawer */}
+
       <div className="absolute right-0 top-0 h-full w-full max-w-xl overflow-y-auto bg-background p-6 shadow-xl">
 
+
         <div className="flex items-center justify-between border-b pb-4">
+
           <div>
             <h2 className="text-2xl font-bold">
               Create Trip
             </h2>
+
             <p className="text-sm text-muted-foreground">
-              Add a new travel experience.
+              Add a new travel experience
             </p>
           </div>
+
 
           <button
             onClick={onClose}
             className="rounded-lg p-2 hover:bg-accent"
           >
-            <X size={20} />
+            <X size={20}/>
           </button>
+
         </div>
+
 
 
         <div className="mt-6 space-y-5">
 
-          <div>
-            <label className="text-sm font-medium">
-              Trip Title
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="Example: Himalayan Adventure"
-            />
-          </div>
+
+          <input
+            value={form.title}
+            onChange={(e)=>updateField("title",e.target.value)}
+            placeholder="Trip Title"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Location
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="Example: Manali"
-            />
-          </div>
+          <input
+            value={form.location}
+            onChange={(e)=>updateField("location",e.target.value)}
+            placeholder="Location"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Price
-            </label>
-            <input
-              type="number"
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="18000"
-            />
-          </div>
+          <input
+            type="number"
+            value={form.price}
+            onChange={(e)=>updateField("price",e.target.value)}
+            placeholder="Price"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Duration
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="6 Days / 5 Nights"
-            />
-          </div>
+          <input
+            value={form.duration}
+            onChange={(e)=>updateField("duration",e.target.value)}
+            placeholder="Duration"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Season
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="April - June"
-            />
-          </div>
+          <input
+            value={form.season}
+            onChange={(e)=>updateField("season",e.target.value)}
+            placeholder="Season"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Description
-            </label>
-            <textarea
-              rows={5}
-              className="mt-2 w-full rounded-xl border bg-background px-4 py-3"
-              placeholder="Describe your trip..."
-            />
-          </div>
+
+          <textarea
+            value={form.description}
+            onChange={(e)=>updateField("description",e.target.value)}
+            placeholder="Description"
+            rows={5}
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
 
-          <div>
-            <label className="text-sm font-medium">
-              Status
-            </label>
 
-            <select className="mt-2 w-full rounded-xl border bg-background px-4 py-3">
-              <option value="draft">
-                Draft
-              </option>
-              <option value="published">
-                Published
-              </option>
-              <option value="archived">
-                Archived
-              </option>
-            </select>
-          </div>
+          <select
+            value={form.status}
+            onChange={(e)=>updateField("status",e.target.value)}
+            className="w-full rounded-xl border px-4 py-3"
+          >
+
+            <option value="draft">
+              Draft
+            </option>
+
+            <option value="published">
+              Published
+            </option>
+
+            <option value="archived">
+              Archived
+            </option>
+
+          </select>
+
+
 
 
           <div className="flex gap-3 pt-4">
+
             <button
-              className="flex-1 rounded-xl border px-5 py-3"
               onClick={onClose}
+              className="flex-1 rounded-xl border px-5 py-3"
             >
               Cancel
             </button>
 
+
             <button
+              onClick={handleSave}
+              disabled={loading}
               className="flex-1 rounded-xl bg-primary px-5 py-3 text-primary-foreground"
             >
-              Save Trip
+
+              {loading ? "Saving..." : "Save Trip"}
+
             </button>
+
+
           </div>
+
 
         </div>
 
+
       </div>
+
+
     </div>
   );
 }
