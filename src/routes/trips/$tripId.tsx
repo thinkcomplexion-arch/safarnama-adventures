@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { MapPin, Clock, CalendarRange } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { getTripById, type Trip } from "@/services/trip";
+import { getTripById, type Trip } from "@/services/trips";
 
 export const Route = createFileRoute("/trips/$tripId")({
   component: TripDetailsPage,
