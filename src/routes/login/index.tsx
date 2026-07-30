@@ -16,30 +16,41 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    alert("1. Login started");
 
-      toast.success("Login successful");
+    const result = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-      navigate({
-        to: "/admin",
-      });
-    } catch (error: any) {
-  alert(error.code + "\n\n" + error.message);
-    }
-    finally {
-      setLoading(false);
-    }
+    alert("2. Firebase login successful: " + result.user.uid);
+
+    toast.success("Login successful");
+
+    alert("3. Going to admin");
+
+    navigate({
+      to: "/admin",
+    });
+
+  } catch (error: any) {
+    alert(
+      "LOGIN ERROR\n\n" +
+      error.code +
+      "\n\n" +
+      error.message
+    );
+
+  } finally {
+    setLoading(false);
   }
-
+  }
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-teal-500 px-4">
 
