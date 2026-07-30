@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   getItinerary,
   addItineraryDay,
+  updateItineraryDay,
   type ItineraryDay,
 } from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
@@ -17,7 +18,8 @@ function ItineraryPage() {
 
   const [days, setDays] = useState<ItineraryDay[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [selectedSectionDay, setSelectedSectionDay] = useState<string | null>(null);
+  
   useEffect(() => {
     async function load() {
       try {
@@ -53,6 +55,47 @@ function ItineraryPage() {
     }
   }
 
+  async function handleAddSection(
+  day: ItineraryDay,
+  type: string
+) {
+  if (!day.id) return;
+
+  try {
+    const newSection = {
+      id: crypto.randomUUID(),
+      type,
+      content: "",
+    };
+
+    await updateItineraryDay(
+      tripId,
+      day.id,
+      {
+        sections: [
+          ...day.sections,
+          newSection,
+        ],
+      }
+    );
+
+    const data = await getItinerary(tripId);
+
+    setDays(data);
+
+    setSelectedSectionDay(null);
+
+  } catch (error) {
+    console.error("Failed to add section:", error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Failed to add section"
+    );
+  }
+  }
+  
 
   return (
     <AdminLayout>
@@ -210,7 +253,48 @@ function ItineraryPage() {
               </div>
 
 
+                <button
+  onClick={() =>
+    setSelectedSectionDay(day.id || null)
+  }
+  className="mt-6 flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-primary-foreground"
+>
+  <Plus size={18} />
+  Add Section
+</button>
+              {selectedSectionDay === day.id && (
 
+  <div className="mt-4 grid grid-cols-2 gap-3">
+
+    {[
+      "description",
+      "gallery",
+      "places",
+      "meals",
+      "stay",
+      "transport",
+      "tips",
+      "highlights",
+      "timings",
+      "custom",
+    ].map((type) => (
+
+      <button
+        key={type}
+        onClick={() =>
+          handleAddSection(day, type)
+        }
+        className="rounded-xl border p-3 capitalize hover:bg-muted"
+      >
+        {type}
+      </button>
+
+    ))}
+
+  </div>
+
+)}
+              
               {/* Sections */}
 
               <div className="mt-6 space-y-3">
