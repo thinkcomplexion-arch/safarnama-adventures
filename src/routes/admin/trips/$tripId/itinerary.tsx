@@ -40,6 +40,27 @@ const [sectionContent, setSectionContent] = useState("");
     load();
   }, [tripId]);
 
+  async function handleAddDay() {
+  try {
+    await addItineraryDay(tripId, {
+      day: days.length + 1,
+      coverImage: "",
+      sections: [],
+    });
+
+    const data = await getItinerary(tripId);
+    setDays(data);
+
+  } catch (error) {
+    console.error("Failed to add day:", error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Something went wrong"
+    );
+  }
+  }
 
   async function handleAddSection(day: ItineraryDay) {
   if (!day.id) return;
