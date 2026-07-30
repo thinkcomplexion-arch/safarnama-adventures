@@ -7,19 +7,19 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-muted/30">
+
+      <Topbar onMenuClick={() => setMenuOpen(true)} />
 
       <Sidebar
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
       />
 
-      <main className="flex-1">
-        <Topbar />
-
+      <main>
         <div className="p-6">
           {children}
         </div>
