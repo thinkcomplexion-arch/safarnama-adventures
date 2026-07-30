@@ -9,40 +9,51 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
 
 const menuItems = [
-  { title: "Dashboard", icon: LayoutDashboard },
-  { title: "Trips", icon: Map },
-  { title: "Itineraries", icon: CalendarDays },
-  { title: "Registrations", icon: Users },
-  { title: "Finance", icon: CreditCard },
-  { title: "Gallery", icon: Image },
-  { title: "Reviews", icon: MessageSquare },
-  { title: "Settings", icon: Settings },
+  { title: "Dashboard", icon: LayoutDashboard, to: "/admin" },
+  { title: "Trips", icon: Map, to: "/admin/trips" },
+  { title: "Itineraries", icon: CalendarDays, to: "/admin/itineraries" },
+  { title: "Registrations", icon: Users, to: "/admin/registrations" },
+  { title: "Finance", icon: CreditCard, to: "/admin/finance" },
+  { title: "Gallery", icon: Image, to: "/admin/gallery" },
+  { title: "Reviews", icon: MessageSquare, to: "/admin/reviews" },
+  { title: "Settings", icon: Settings, to: "/admin/settings" },
 ];
 
 export function Sidebar() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+
   return (
     <aside className="w-72 min-h-screen border-r bg-background">
-      <div className="p-6 border-b">
+      <div className="border-b p-6">
         <h1 className="text-2xl font-bold">🌍 Safar Nama</h1>
         <p className="text-sm text-muted-foreground">
           Management Portal
         </p>
       </div>
 
-      <nav className="p-4 space-y-2">
+      <nav className="space-y-2 p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
+          const active = pathname === item.to;
 
           return (
-            <button
+            <Link
               key={item.title}
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition hover:bg-accent"
+              to={item.to}
+              className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 transition ${
+                active
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-accent"
+              }`}
             >
               <Icon size={18} />
               <span>{item.title}</span>
-            </button>
+            </Link>
           );
         })}
 
@@ -54,5 +65,4 @@ export function Sidebar() {
         </div>
       </nav>
     </aside>
-  );
-}
+    }
