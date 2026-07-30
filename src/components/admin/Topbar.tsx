@@ -1,8 +1,12 @@
-import { Bell, UserCircle, LogOut } from "lucide-react";
+import { Bell, UserCircle, LogOut, Menu } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/context/AuthContext";
 
-export function Topbar() {
+interface TopbarProps {
+  onMenuClick: () => void;
+}
+
+export function Topbar({ onMenuClick }: TopbarProps) {
   const { profile, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -16,7 +20,16 @@ export function Topbar() {
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-6">
+
+      <button
+        onClick={onMenuClick}
+        className="rounded-lg p-2 transition hover:bg-accent"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
+
       <div>
+
         <h2 className="text-xl font-bold">
           Dashboard
         </h2>
