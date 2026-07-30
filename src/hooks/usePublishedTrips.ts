@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPublishedTrips, type Trip } from "@/services/trip";
+import { getPublishedTrips, type Trip } from "@/services/trips";
 
 export function usePublishedTrips() {
   const [trips, setTrips] = useState<Trip[]>([]);
