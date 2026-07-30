@@ -20,19 +20,36 @@ function AdminDashboard() {
     );
   }
 
-  if (
-    !user ||
-    !profile ||
-    profile.role !== "owner" ||
-    profile.active !== true
-  ) {
-    navigate({
-      to: "/login",
-    });
+  if (!user) {
+  return (
+    <div className="p-10">
+      No Firebase user found
+    </div>
+  );
+}
 
-    return null;
-  }
+if (!profile) {
+  return (
+    <div className="p-10">
+      User logged in, but admin profile not found
+      <br />
+      UID: {user.uid}
+    </div>
+  );
+}
 
+if (profile.role !== "owner" || profile.active !== true) {
+  return (
+    <div className="p-10">
+      Access denied
+      <br />
+      Role: {profile.role}
+      <br />
+      Active: {String(profile.active)}
+    </div>
+  );
+}
+  
   return (
     <AdminLayout>
       <div className="space-y-6">
