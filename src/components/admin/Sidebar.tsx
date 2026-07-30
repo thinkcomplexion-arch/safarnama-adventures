@@ -65,4 +65,5 @@ export function Sidebar() {
         </div>
       </nav>
     </aside>
+    );
     }
