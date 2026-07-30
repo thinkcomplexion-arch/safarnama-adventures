@@ -9,7 +9,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-import { db } from "@/lib/firebase";
+import { db } from "@/firebase";
 
 export interface ItinerarySection {
   id: string;
