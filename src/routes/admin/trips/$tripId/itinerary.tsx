@@ -5,6 +5,7 @@ import {
   getItinerary,
   addItineraryDay,
   updateItineraryDay,
+  deleteItineraryDay,
   type ItineraryDay,
 } from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
@@ -185,6 +186,75 @@ const [sectionContent, setSectionContent] = useState("");
   }
   }
 
+
+  async function handleDeleteSection(
+  dayId: string,
+  sectionId: string
+) {
+  try {
+    const day = days.find(
+      (item) => item.id === dayId
+    );
+
+    if (!day) return;
+
+    const updatedSections = day.sections.filter(
+      (section) => section.id !== sectionId
+    );
+
+    await updateItineraryDay(
+      tripId,
+      dayId,
+      {
+        sections: updatedSections,
+      }
+    );
+
+    const data = await getItinerary(tripId);
+
+    setDays(data);
+
+  } catch (error) {
+    console.error(
+      "Failed to delete section:",
+      error
+    );
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Failed to delete section"
+    );
+  }
+  }
+
+
+  async function handleDeleteDay(dayId: string) {
+  try {
+    await deleteItineraryDay(
+      tripId,
+      dayId
+    );
+
+    const data = await getItinerary(tripId);
+
+    setDays(data);
+
+  } catch (error) {
+    console.error(
+      "Failed to delete day:",
+      error
+    );
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Failed to delete day"
+    );
+  }
+  }
+  
+
   return (
     <AdminLayout>
 
@@ -289,24 +359,21 @@ const [sectionContent, setSectionContent] = useState("");
 
                 <div className="flex gap-3">
 
-                  <button className="rounded-xl border p-3 hover:bg-muted">
+  <button
+    onClick={() =>
+      handleDeleteDay(day.id!)
+    }
+    className="rounded-xl border p-3 hover:bg-red-100"
+  >
 
-                    <Pencil size={18} />
+    <Trash2
+      size={18}
+      className="text-red-500"
+    />
 
-                  </button>
+  </button>
 
-
-                  <button className="rounded-xl border p-3 hover:bg-red-100">
-
-                    <Trash2
-                      size={18}
-                      className="text-red-500"
-                    />
-
-                  </button>
-
-
-                </div>
+</div>
 
 
               </div>
@@ -416,27 +483,44 @@ const [sectionContent, setSectionContent] = useState("");
       </p>
 
 
-      <button
-        onClick={() => {
+      <div className="mt-3 flex gap-3">
 
-          setEditingSection({
-            dayId: day.id!,
-            sectionId: section.id,
-          });
+  <button
+    onClick={() => {
 
-          setSectionTitle(
-            section.title || ""
-          );
+      setEditingSection({
+        dayId: day.id!,
+        sectionId: section.id,
+      });
 
-          setSectionContent(
-            section.content || ""
-          );
+      setSectionTitle(
+        section.title || ""
+      );
 
-        }}
-        className="mt-3 rounded-xl border px-4 py-2"
-      >
-        Edit Section
-      </button>
+      setSectionContent(
+        section.content || ""
+      );
+
+    }}
+    className="rounded-xl border px-4 py-2"
+  >
+    Edit Section
+  </button>
+
+
+  <button
+    onClick={() =>
+      handleDeleteSection(
+        day.id!,
+        section.id
+      )
+    }
+    className="rounded-xl border px-4 py-2 text-red-500 hover:bg-red-50"
+  >
+    Delete
+  </button>
+
+</div>
 
     </>
 
