@@ -95,46 +95,6 @@ const [sectionContent, setSectionContent] = useState("");
   }
   }
 
-  async function handleAddSection(
-  day: ItineraryDay,
-  type: string
-) {
-  if (!day.id) return;
-
-  try {
-    const newSection = {
-      id: crypto.randomUUID(),
-      type,
-      content: "",
-    };
-
-    await updateItineraryDay(
-      tripId,
-      day.id,
-      {
-        sections: [
-          ...day.sections,
-          newSection,
-        ],
-      }
-    );
-
-    const data = await getItinerary(tripId);
-
-    setDays(data);
-
-    setSelectedSectionDay(null);
-
-  } catch (error) {
-    console.error("Failed to add section:", error);
-
-    alert(
-      error instanceof Error
-        ? error.message
-        : "Failed to add section"
-    );
-  }
-  }
 
   async function handleSaveSection(
   dayId: string,
