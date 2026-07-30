@@ -463,16 +463,7 @@ const [sectionContent, setSectionContent] = useState("");
 
 </div>
 
-                    <h3 className="font-semibold capitalize">
-                      {section.title || section.type}
-                    </h3>
-
-                    <p className="text-sm text-muted-foreground">
-                      {section.content || "No content"}
-                    </p>
-
-
-                  </div>
+              
 
                 ))}
 
