@@ -19,6 +19,13 @@ function ItineraryPage() {
   const [days, setDays] = useState<ItineraryDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSectionDay, setSelectedSectionDay] = useState<string | null>(null);
+  const [editingSection, setEditingSection] = useState<{
+  dayId: string;
+  sectionId: string;
+} | null>(null);
+
+const [sectionTitle, setSectionTitle] = useState("");
+const [sectionContent, setSectionContent] = useState("");
   
   useEffect(() => {
     async function load() {
@@ -95,7 +102,74 @@ function ItineraryPage() {
     );
   }
   }
-  
+
+  async function handleSaveSection(
+  dayId: string,
+  sectionId: string
+) {
+  try {
+
+    const updatedDays = days.map((day) => {
+
+      if (day.id !== dayId) {
+        return day;
+      }
+
+      return {
+        ...day,
+        sections: day.sections.map((section) => {
+
+          if (section.id !== sectionId) {
+            return section;
+          }
+
+          return {
+            ...section,
+            title: sectionTitle,
+            content: sectionContent,
+          };
+
+        }),
+      };
+
+    });
+
+
+    const updatedDay = updatedDays.find(
+      (day) => day.id === dayId
+    );
+
+
+    if (!updatedDay) return;
+
+
+    await updateItineraryDay(
+      tripId,
+      dayId,
+      {
+        sections: updatedDay.sections,
+      }
+    );
+
+
+    const data = await getItinerary(tripId);
+
+    setDays(data);
+
+    setEditingSection(null);
+    setSectionTitle("");
+    setSectionContent("");
+
+
+  } catch(error) {
+
+    console.error(
+      "Failed to save section:",
+      error
+    );
+
+  }
+  }
 
   return (
     <AdminLayout>
@@ -302,9 +376,92 @@ function ItineraryPage() {
                 {day.sections.map((section) => (
 
                   <div
-                    key={section.id}
-                    className="rounded-xl border p-4"
-                  >
+  key={section.id}
+  className="rounded-xl border p-4"
+>
+
+  <h3 className="font-semibold capitalize">
+    {section.title || section.type}
+  </h3>
+
+
+  {editingSection?.sectionId === section.id ? (
+
+    <div className="mt-4 space-y-3">
+
+      <input
+        value={sectionTitle}
+        onChange={(e) =>
+          setSectionTitle(e.target.value)
+        }
+        placeholder="Section title"
+        className="w-full rounded-xl border p-3"
+      />
+
+
+      <textarea
+        value={sectionContent}
+        onChange={(e) =>
+          setSectionContent(e.target.value)
+        }
+        placeholder="Write details..."
+        rows={5}
+        className="w-full rounded-xl border p-3"
+      />
+
+
+      <button
+        onClick={() =>
+          handleSaveSection(
+            day.id!,
+            section.id
+          )
+        }
+        className="rounded-xl bg-primary px-5 py-3 text-primary-foreground"
+      >
+        Save Section
+      </button>
+
+
+    </div>
+
+
+  ) : (
+
+    <>
+
+      <p className="mt-2 text-sm text-muted-foreground">
+        {section.content || "No content"}
+      </p>
+
+
+      <button
+        onClick={() => {
+
+          setEditingSection({
+            dayId: day.id!,
+            sectionId: section.id,
+          });
+
+          setSectionTitle(
+            section.title || ""
+          );
+
+          setSectionContent(
+            section.content || ""
+          );
+
+        }}
+        className="mt-3 rounded-xl border px-4 py-2"
+      >
+        Edit Section
+      </button>
+
+    </>
+
+  )}
+
+</div>
 
                     <h3 className="font-semibold capitalize">
                       {section.title || section.type}
