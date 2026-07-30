@@ -31,12 +31,9 @@ export function Topbar({ onMenuClick }: TopbarProps) {
       <div>
 
         <h2 className="text-xl font-bold">
-          Dashboard
+        Safarnama Admin
         </h2>
 
-        <p className="text-sm text-muted-foreground">
-          Welcome to Safar Nama Management Portal
-        </p>
       </div>
 
 
