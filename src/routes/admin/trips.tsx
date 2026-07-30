@@ -1,12 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { Search, Plus, Map } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { CreateTripDrawer } from "@/components/admin/CreateTripDrawer";
+
+
 
 export const Route = createFileRoute("/admin/trips")({
   component: TripsPage,
 });
 
 function TripsPage() {
+  const [createOpen, setCreateOpen] = useState(false);
+
   return (
     <AdminLayout>
       <div className="space-y-8">
@@ -20,11 +26,13 @@ function TripsPage() {
             </p>
           </div>
 
-          <button className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-primary-foreground transition hover:opacity-90">
-            <Plus size={18} />
-            Create Trip
-          </button>
-        </div>
+          <button
+  onClick={() => setCreateOpen(true)}
+  className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-primary-foreground transition hover:opacity-90"
+>
+  <Plus size={18} />
+  Create Trip
+</button>
 
         {/* Search */}
         <div className="rounded-2xl border bg-card p-5 shadow-sm">
@@ -57,12 +65,20 @@ function TripsPage() {
             Create your first trip and it will automatically appear here.
           </p>
 
-          <button className="mt-8 flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-primary-foreground transition hover:opacity-90">
-            <Plus size={18} />
-            Create First Trip
-          </button>
+          <button
+  onClick={() => setCreateOpen(true)}
+  className="mt-8 flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-primary-foreground transition hover:opacity-90"
+>
+  <Plus size={18} />
+  Create First Trip
+</button>
 
-        </div>
+                </div>
+
+        <CreateTripDrawer
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+        />
 
       </div>
     </AdminLayout>
