@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useEffect, useState } from "react";
-import { uploadItineraryImage } from "@/services/storage";
 import {
   getItinerary,
   addItineraryDay,
@@ -28,7 +27,7 @@ function ItineraryPage() {
 
 const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
-  const [uploadingDay, setUploadingDay] = useState<string | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   
   useEffect(() => {
     async function load() {
@@ -404,30 +403,27 @@ const [sectionContent, setSectionContent] = useState("");
                       : "No image uploaded"}
                   </p>
 
-                    <input
-  type="file"
-  accept="image/*"
-  hidden
-  id={`cover-${day.id}`}
-  onChange={async (e) => {
+                    <div className="mt-5 w-full space-y-3">
 
-    const file = e.target.files?.[0];
+  <input
+    value={coverImageUrl}
+    onChange={(e) =>
+      setCoverImageUrl(e.target.value)
+    }
+    placeholder="Paste image URL here"
+    className="w-full rounded-xl border p-3"
+  />
 
-    if (!file || !day.id) return;
+  <button
+    onClick={async () => {
 
-    try {
-      setUploadingDay(day.id);
-
-      const url = await uploadItineraryImage(
-        file,
-        `itineraries/${tripId}/${day.id}/cover`
-      );
+      if (!day.id || !coverImageUrl) return;
 
       await updateItineraryDay(
         tripId,
         day.id,
         {
-          coverImage: url,
+          coverImage: coverImageUrl,
         }
       );
 
@@ -435,36 +431,15 @@ const [sectionContent, setSectionContent] = useState("");
 
       setDays(data);
 
-    } catch (error) {
+      setCoverImageUrl("");
 
-      console.error(
-        "Image upload failed:",
-        error
-      );
+    }}
+    className="rounded-xl bg-primary px-5 py-3 text-primary-foreground"
+  >
+    Save Cover Image
+  </button>
 
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Image upload failed"
-      );
-
-    } finally {
-
-      setUploadingDay(null);
-
-    }
-
-  }}
-/>
-
-<label
-  htmlFor={`cover-${day.id}`}
-  className="mt-5 cursor-pointer rounded-xl bg-primary px-5 py-3 text-primary-foreground"
->
-  {uploadingDay === day.id
-    ? "Uploading..."
-    : "Upload Cover Image"}
-</label>
+</div>
                   
                 </div>
 
