@@ -12,7 +12,7 @@ import {
 } from "@/services/trips";
 
 
-export const Route = createFileRoute("/admin/trips")({
+export const Route = createFileRoute("/admin/trips/")({
   component: TripsPage,
 });
 
