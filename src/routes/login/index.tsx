@@ -14,6 +14,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+const [status, setStatus] = useState("");
 
   async function handleLogin(e: React.FormEvent) {
   e.preventDefault();
@@ -21,7 +22,7 @@ function LoginPage() {
   try {
     setLoading(true);
 
-    alert("1. Login started");
+    setStatus("1. Login started");
 
     const result = await signInWithEmailAndPassword(
       auth,
@@ -29,18 +30,20 @@ function LoginPage() {
       password
     );
 
-    alert("2. Firebase login successful: " + result.user.uid);
+    setStatus(
+      "2. Firebase login successful\nUID: " + result.user.uid
+    );
 
     toast.success("Login successful");
 
-    alert("3. Going to admin");
+    setStatus("3. Redirecting to admin...");
 
     navigate({
       to: "/admin",
     });
 
   } catch (error: any) {
-    alert(
+    setStatus(
       "LOGIN ERROR\n\n" +
       error.code +
       "\n\n" +
@@ -51,6 +54,7 @@ function LoginPage() {
     setLoading(false);
   }
   }
+  
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-teal-500 px-4">
 
@@ -118,6 +122,11 @@ function LoginPage() {
           >
             {loading ? "Signing in..." : "Login"}
           </button>
+          {status && (
+  <div className="mt-4 rounded-xl bg-black/30 p-3 text-sm text-white whitespace-pre-line">
+    {status}
+  </div>
+)}
 
         </form>
 
