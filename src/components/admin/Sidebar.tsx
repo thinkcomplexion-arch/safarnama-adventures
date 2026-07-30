@@ -8,7 +8,6 @@ import {
   MessageSquare,
   Settings,
   LogOut,
-  Menu,
   X,
 } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -26,49 +25,49 @@ const menuItems = [
 
 interface SidebarProps {
   open: boolean;
-  setOpen: (value: boolean) => void;
+  onClose: () => void;
 }
 
-export function Sidebar({ open, setOpen }: SidebarProps) {
+export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
 
   return (
     <>
-      {/* Mobile menu button */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="fixed left-4 top-4 z-50 rounded-lg border bg-background p-2 shadow md:hidden"
-      >
-        {open ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Overlay on mobile */}
+      {/* Overlay */}
       {open && (
         <div
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/40"
         />
       )}
 
+      {/* Drawer */}
       <aside
-        className={`fixed left-0 top-0 z-40 min-h-screen border-r bg-background transition-all duration-300 md:static ${
-          open ? "w-72" : "w-20"
+        className={`fixed left-0 top-0 z-50 h-screen w-72 bg-background border-r shadow-xl transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="border-b p-6">
-          {open ? (
-            <>
-              <h1 className="text-2xl font-bold">🌍 Safar Nama</h1>
-              <p className="text-sm text-muted-foreground">
-                Management Portal
-              </p>
-            </>
-          ) : (
-            <h1 className="text-xl font-bold">🌍</h1>
-          )}
+        <div className="flex items-center justify-between border-b p-6">
+          <div>
+            <h1 className="text-2xl font-bold">
+              🌍 Safar Nama
+            </h1>
+
+            <p className="text-sm text-muted-foreground">
+              Management Portal
+            </p>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="rounded-lg p-2 hover:bg-accent"
+          >
+            <X size={20} />
+          </button>
         </div>
+
 
         <nav className="space-y-2 p-4">
           {menuItems.map((item) => {
@@ -79,7 +78,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               <Link
                 key={item.title}
                 to={item.to}
-                onClick={() => setOpen(false)}
+                onClick={onClose}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 transition ${
                   active
                     ? "bg-primary text-primary-foreground"
@@ -87,25 +86,23 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
                 }`}
               >
                 <Icon size={18} />
-
-                {open && (
-                  <span>{item.title}</span>
-                )}
+                <span>{item.title}</span>
               </Link>
             );
           })}
 
-          <div className="pt-6">
-            <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-500 transition hover:bg-red-50">
-              <LogOut size={18} />
 
-              {open && (
-                <span>Logout</span>
-              )}
+          <div className="pt-6">
+            <button
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-500 hover:bg-red-50"
+            >
+              <LogOut size={18} />
+              Logout
             </button>
           </div>
+
         </nav>
       </aside>
     </>
   );
-                  }
+}
