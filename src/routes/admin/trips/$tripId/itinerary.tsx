@@ -396,23 +396,30 @@ const [sectionContent, setSectionContent] = useState("");
                     Cover Image
                   </p>
 
-
-                  <p className="text-sm text-muted-foreground">
-                    {day.coverImage
-                      ? day.coverImage
-                      : "No image uploaded"}
-                  </p>
-
+                  {day.coverImage ? (
+  <img
+    src={day.coverImage}
+    alt={`Day ${day.day} cover`}
+    className="mt-4 h-60 w-full rounded-2xl object-cover"
+  />
+) : (
+  <p className="text-sm text-muted-foreground">
+    No image uploaded
+  </p>
+)}
+                  
                     <div className="mt-5 w-full space-y-3">
 
   <input
-    value={coverImageUrl}
-    onChange={(e) =>
-      setCoverImageUrl(e.target.value)
-    }
-    placeholder="Paste image URL here"
-    className="w-full rounded-xl border p-3"
-  />
+  value={
+    coverImageUrl || day.coverImage || ""
+  }
+  onChange={(e) =>
+    setCoverImageUrl(e.target.value)
+  }
+  placeholder="Paste image URL here"
+  className="w-full rounded-xl border p-3"
+/>
 
   <button
     onClick={async () => {
