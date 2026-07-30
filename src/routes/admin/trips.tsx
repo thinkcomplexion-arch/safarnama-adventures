@@ -138,13 +138,13 @@ function TripsPage() {
 
           <div className="flex gap-2 pt-4">
 
-            <Link
-  to={`/admin/trips/${trip.id}/itinerary`}
+              <Link
+  to="/admin/trips/$tripId/itinerary"
+  params={{ tripId: trip.id }}
   className="rounded-lg bg-blue-500 px-3 py-2 text-sm text-white"
 >
   Manage Itinerary
 </Link>
-
             {trip.status === "draft" && (
               <button
                 onClick={()=>publishTrip(trip.id).then(loadTrips)}
