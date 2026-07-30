@@ -33,9 +33,8 @@ function LoginPage() {
         to: "/admin",
       });
     } catch (error: any) {
-      toast.error(
-        error.message || "Invalid email or password"
-      );
+  alert(error.code + "\n\n" + error.message);
+    }
     } finally {
       setLoading(false);
     }
