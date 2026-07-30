@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Search, Plus, Map } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { CreateTripDrawer } from "@/components/admin/CreateTripDrawer";
+import { Link } from "@tanstack/react-router";
 import {
   getAllTrips,
   deleteTrip,
@@ -136,6 +137,13 @@ function TripsPage() {
 
 
           <div className="flex gap-2 pt-4">
+
+            <Link
+  to={`/admin/trips/${trip.id}/itinerary`}
+  className="rounded-lg bg-blue-500 px-3 py-2 text-sm text-white"
+>
+  Manage Itinerary
+</Link>
 
             {trip.status === "draft" && (
               <button
