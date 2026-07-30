@@ -3,6 +3,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useEffect, useState } from "react";
 import {
   getItinerary,
+  addItineraryDay,
   type ItineraryDay,
 } from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
