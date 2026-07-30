@@ -4,6 +4,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Badge } from "@/components/ui/badge-pill";
 import { RippleButton } from "@/components/ui/ripple-button";
 import { usePublishedTrips } from "@/hooks/usePublishedTrips";
+import { Link } from "@tanstack/react-router";
 
 export function Tours() {
   const { trips, loading } = usePublishedTrips();
@@ -68,9 +69,11 @@ export function Tours() {
                   </span>
                 </div>
 
-                <RippleButton variant="sea" size="sm" className="mt-6 w-full">
-                  View Details <ArrowUpRight className="h-4 w-4" />
-                </RippleButton>
+                <Link to={`/trips/${tour.id}`}>
+  <RippleButton variant="sea" size="sm" className="mt-6 w-full">
+    View Details <ArrowUpRight className="h-4 w-4" />
+  </RippleButton>
+</Link>
               </div>
             </motion.article>
           ))}
