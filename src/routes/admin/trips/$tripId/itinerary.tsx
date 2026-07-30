@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useEffect, useState } from "react";
+import { uploadItineraryImage } from "@/services/storage";
 import {
   getItinerary,
   addItineraryDay,
@@ -27,6 +28,7 @@ function ItineraryPage() {
 
 const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
+  const [uploadingDay, setUploadingDay] = useState<string | null>(null);
   
   useEffect(() => {
     async function load() {
@@ -402,7 +404,68 @@ const [sectionContent, setSectionContent] = useState("");
                       : "No image uploaded"}
                   </p>
 
+                    <input
+  type="file"
+  accept="image/*"
+  hidden
+  id={`cover-${day.id}`}
+  onChange={async (e) => {
 
+    const file = e.target.files?.[0];
+
+    if (!file || !day.id) return;
+
+    try {
+      setUploadingDay(day.id);
+
+      const url = await uploadItineraryImage(
+        file,
+        `itineraries/${tripId}/${day.id}/cover`
+      );
+
+      await updateItineraryDay(
+        tripId,
+        day.id,
+        {
+          coverImage: url,
+        }
+      );
+
+      const data = await getItinerary(tripId);
+
+      setDays(data);
+
+    } catch (error) {
+
+      console.error(
+        "Image upload failed:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Image upload failed"
+      );
+
+    } finally {
+
+      setUploadingDay(null);
+
+    }
+
+  }}
+/>
+
+<label
+  htmlFor={`cover-${day.id}`}
+  className="mt-5 cursor-pointer rounded-xl bg-primary px-5 py-3 text-primary-foreground"
+>
+  {uploadingDay === day.id
+    ? "Uploading..."
+    : "Upload Cover Image"}
+</label>
+                  
                 </div>
 
               </div>
