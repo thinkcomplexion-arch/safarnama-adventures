@@ -28,6 +28,7 @@ function ItineraryPage() {
 const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [editingCoverDay, setEditingCoverDay] = useState<string | null>(null);
   
   useEffect(() => {
     async function load() {
@@ -241,6 +242,9 @@ const [sectionContent, setSectionContent] = useState("");
 
     setDays(data);
 
+    setCoverImageUrl("");
+setEditingCoverDay(null);
+
   } catch (error) {
     console.error(
       "Failed to delete day:",
@@ -410,41 +414,84 @@ const [sectionContent, setSectionContent] = useState("");
                   
                     <div className="mt-5 w-full space-y-3">
 
-  <input
-  value={
-    coverImageUrl || day.coverImage || ""
-  }
-  onChange={(e) =>
-    setCoverImageUrl(e.target.value)
-  }
-  placeholder="Paste image URL here"
-  className="w-full rounded-xl border p-3"
-/>
+{editingCoverDay === day.id || !day.coverImage ? (
 
-  <button
-    onClick={async () => {
+  <>
+    <input
+      value={coverImageUrl}
+      onChange={(e) =>
+        setCoverImageUrl(e.target.value)
+      }
+      placeholder="Paste image URL here"
+      className="w-full rounded-xl border p-3"
+    />
 
-      if (!day.id || !coverImageUrl) return;
+    <button
+      onClick={async () => {
 
-      await updateItineraryDay(
-        tripId,
-        day.id,
-        {
-          coverImage: coverImageUrl,
-        }
-      );
+        if (!day.id || !coverImageUrl) return;
 
-      const data = await getItinerary(tripId);
+        await updateItineraryDay(
+          tripId,
+          day.id,
+          {
+            coverImage: coverImageUrl,
+          }
+        );
 
-      setDays(data);
+        const data = await getItinerary(tripId);
 
-      setCoverImageUrl("");
+        setDays(data);
 
-    }}
-    className="rounded-xl bg-primary px-5 py-3 text-primary-foreground"
-  >
-    Save Cover Image
-  </button>
+        setCoverImageUrl("");
+        setEditingCoverDay(null);
+
+      }}
+      className="rounded-xl bg-primary px-5 py-3 text-primary-foreground"
+    >
+      Save Cover Image
+    </button>
+  </>
+
+) : (
+
+  <div className="flex gap-3">
+
+    <button
+      onClick={() => {
+        setCoverImageUrl(day.coverImage);
+        setEditingCoverDay(day.id!);
+      }}
+      className="rounded-xl border px-5 py-3"
+    >
+      Edit URL
+    </button>
+
+
+    <button
+      onClick={async () => {
+
+        await updateItineraryDay(
+          tripId,
+          day.id!,
+          {
+            coverImage: "",
+          }
+        );
+
+        const data = await getItinerary(tripId);
+
+        setDays(data);
+
+      }}
+      className="rounded-xl border px-5 py-3 text-red-500"
+    >
+      Remove Image
+    </button>
+
+  </div>
+
+)}
 
 </div>
                   
