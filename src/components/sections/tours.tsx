@@ -3,9 +3,11 @@ import { ArrowUpRight, CalendarRange, Clock, MapPin } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Badge } from "@/components/ui/badge-pill";
 import { RippleButton } from "@/components/ui/ripple-button";
-import { tours } from "@/data/site";
+import { usePublishedTrips } from "@/hooks/usePublishedTrips";
 
 export function Tours() {
+  const { trips, loading } = usePublishedTrips();
+
   return (
     <section id="tours" className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-6">
@@ -17,7 +19,7 @@ export function Tours() {
         />
 
         <div className="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {tours.map((tour, index) => (
+          {trips.map((tour, index) => (
             <motion.article
               key={tour.id}
               initial={{ opacity: 0, y: 40 }}
