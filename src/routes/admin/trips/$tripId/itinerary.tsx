@@ -41,25 +41,58 @@ const [sectionContent, setSectionContent] = useState("");
   }, [tripId]);
 
 
-  async function handleAddDay() {
-    try {
-      await addItineraryDay(tripId, {
-        day: days.length + 1,
-        coverImage: "",
-        sections: [],
+  async function handleAddSection(day: ItineraryDay) {
+  if (!day.id) return;
+
+  try {
+    const newSection = {
+      id: crypto.randomUUID(),
+      title: "",
+      content: "",
+    };
+
+    await updateItineraryDay(
+      tripId,
+      day.id,
+      {
+        sections: [
+          ...day.sections,
+          newSection,
+        ],
+      }
+    );
+
+    const data = await getItinerary(tripId);
+
+    setDays(data);
+
+    const createdSection =
+      data
+        .find((d) => d.id === day.id)
+        ?.sections.at(-1);
+
+    if (createdSection) {
+      setEditingSection({
+        dayId: day.id,
+        sectionId: createdSection.id,
       });
 
-      const data = await getItinerary(tripId);
-      setDays(data);
-
-    } catch (error) {
-      console.error("Failed to add day:", error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong"
-      );
+      setSectionTitle("");
+      setSectionContent("");
     }
+
+  } catch (error) {
+    console.error(
+      "Failed to add section:",
+      error
+    );
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Failed to add section"
+    );
+  }
   }
 
   async function handleAddSection(
@@ -328,46 +361,13 @@ const [sectionContent, setSectionContent] = useState("");
 
 
                 <button
-  onClick={() =>
-    setSelectedSectionDay(day.id || null)
-  }
+  onClick={() => handleAddSection(day)}
   className="mt-6 flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-primary-foreground"
 >
   <Plus size={18} />
   Add Section
 </button>
-              {selectedSectionDay === day.id && (
-
-  <div className="mt-4 grid grid-cols-2 gap-3">
-
-    {[
-      "description",
-      "gallery",
-      "places",
-      "meals",
-      "stay",
-      "transport",
-      "tips",
-      "highlights",
-      "timings",
-      "custom",
-    ].map((type) => (
-
-      <button
-        key={type}
-        onClick={() =>
-          handleAddSection(day, type)
-        }
-        className="rounded-xl border p-3 capitalize hover:bg-muted"
-      >
-        {type}
-      </button>
-
-    ))}
-
-  </div>
-
-)}
+              
               
               {/* Sections */}
 
@@ -381,8 +381,8 @@ const [sectionContent, setSectionContent] = useState("");
 >
 
   <h3 className="font-semibold capitalize">
-    {section.title || section.type}
-  </h3>
+  {section.title || "Untitled Section"}
+</h3>
 
 
   {editingSection?.sectionId === section.id ? (
