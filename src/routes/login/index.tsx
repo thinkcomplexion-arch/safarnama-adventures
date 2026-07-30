@@ -35,7 +35,7 @@ function LoginPage() {
     } catch (error: any) {
   alert(error.code + "\n\n" + error.message);
     }
-    } finally {
+    finally {
       setLoading(false);
     }
   }
