@@ -15,7 +15,7 @@ import {
   type ItineraryDay,
 } from "@/services/itinerary";
 
-export const Route = createFileRoute("/trips/$tripId")({
+export const Route = createFileRoute("/trips/$tripId/")({
   component: TripDetailsPage,
 });
 
