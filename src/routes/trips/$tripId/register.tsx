@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { PaymentStep } from "@/components/registration/PaymentStep";
 
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -44,7 +45,7 @@ function RegistrationPage() {
   const [loading, setLoading] =
     useState(true);
 
-
+const [step, setStep] = useState(1);
   const [submitting, setSubmitting] =
     useState(false);
 
@@ -141,9 +142,7 @@ function RegistrationPage() {
       );
 
 
-      alert(
-        "Registration submitted successfully"
-      );
+        setStep(2);
 
 
       // payment step will come here later
@@ -237,7 +236,9 @@ function RegistrationPage() {
           ">
 
 
-          {fields.map(field=>(
+          {step === 1 && (
+  <>
+    {fields.map((field)=>(
 
 
             <div key={field.id}>
@@ -317,7 +318,8 @@ function RegistrationPage() {
 
           ))}
 
-
+              </>
+)}
           </div>
 
 
@@ -350,7 +352,12 @@ function RegistrationPage() {
 
           </button>
 
-
+           {step === 2 && (
+  <PaymentStep
+    tripId={tripId}
+    tripPrice={trip?.price || 0}
+  />
+)}
 
           <Link
 
