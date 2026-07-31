@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { MapPin, Clock, CalendarRange } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ItinerarySectionView } from "@/components/ItinerarySection";
 import {
   getTripById,
   type Trip,
@@ -335,77 +336,14 @@ setLoading(false);
             {/* Sections */}
             <div className="mt-12 space-y-10">
 
-              {day.sections.map((section) => (
+                {day.sections.map((section) => (
+  <ItinerarySectionView
+    key={section.id}
+    section={section}
+  />
+))}
 
-                <div
-                  key={section.id}
-                  className="
-                    border-b
-                    border-white/20
-                    pb-8
-                    last:border-none
-                  "
-                >
-
-                  <div className="flex items-center gap-5">
-
-                    <div
-                      className="
-                        flex
-                        h-16
-                        w-16
-                        items-center
-                        justify-center
-                        rounded-3xl
-                        bg-white/20
-                        text-4xl
-                        backdrop-blur-xl
-                      "
-                    >
-                      {getSectionIcon(section.type)}
-                    </div>
-
-
-                    <div>
-
-                      <h3 className="text-3xl font-bold">
-                        {section.title || "Untitled Section"}
-                      </h3>
-
-
-                      <p
-                        className="
-                          mt-1
-                          text-sm
-                          uppercase
-                          tracking-widest
-                          text-white/70
-                        "
-                      >
-                        {section.type}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-
-                  <p
-                    className="
-                      mt-5
-                      text-lg
-                      leading-loose
-                      text-white/90
-                      md:text-xl
-                    "
-                  >
-                    {section.content}
-                  </p>
-
-
-                </div>
-
-              ))}
+          
 
             </div>
 
