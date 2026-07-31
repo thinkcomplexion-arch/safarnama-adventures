@@ -161,16 +161,17 @@ function RegistrationPage() {
 
 
 
-      await createRegistration(
+          const readableResponses: Record<string, any> = {};
 
-        tripId,
+fields.forEach((field) => {
+  readableResponses[field.label] = formData[field.id];
+});
 
-        {
-
-          responses:formData,
-
-
-          payment:{
+await createRegistration(
+  tripId,
+  {
+    responses: readableResponses,
+    payment: {
 
             totalAmount:
               trip?.price || 0,
