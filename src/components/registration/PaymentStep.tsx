@@ -52,20 +52,21 @@ export function PaymentStep({
       setConfig(form);
 
 
-      const advance =
+      const advanceAmount =
         Math.round(
           (tripPrice * form.advancePercentage) / 100
         );
 
 
-      setAmount(advance);
+      setAmount(advanceAmount);
 
 
 
       if (form.upiId) {
 
         const link =
-          `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advance}&cu=INR`;
+          `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advanceAmount}&cu=INR`;
+
 
         setUpiLink(link);
 
@@ -110,7 +111,6 @@ export function PaymentStep({
 
 
 
-
   return (
 
     <div className="
@@ -137,19 +137,18 @@ export function PaymentStep({
         p-4
       ">
 
-        <p>
-          Advance Amount
+        <p className="text-muted-foreground">
+          Pay Advance Amount
         </p>
 
 
         <p className="
+          mt-2
           text-3xl
           font-bold
-          mt-2
         ">
           ₹{amount}
         </p>
-
 
       </div>
 
@@ -157,7 +156,7 @@ export function PaymentStep({
 
 
       {
-        config?.upiId && (
+        config?.upiId ? (
 
           <>
 
@@ -180,6 +179,7 @@ export function PaymentStep({
 
 
 
+
             <div className="
               grid
               grid-cols-3
@@ -191,24 +191,16 @@ export function PaymentStep({
                 onClick={openUPI}
                 className="
                   flex
-                  flex-col
                   items-center
-                  gap-2
+                  justify-center
                   rounded-xl
                   border
                   p-4
                   hover:bg-accent
                 "
               >
-
-                <SiGooglepay size={35}/>
-
-                <span className="text-sm">
-                  Google Pay
-                </span>
-
+                <SiGooglepay size={42}/>
               </button>
-
 
 
 
@@ -217,24 +209,16 @@ export function PaymentStep({
                 onClick={openUPI}
                 className="
                   flex
-                  flex-col
                   items-center
-                  gap-2
+                  justify-center
                   rounded-xl
                   border
                   p-4
                   hover:bg-accent
                 "
               >
-
-                <SiPhonepe size={35}/>
-
-                <span className="text-sm">
-                  PhonePe
-                </span>
-
+                <SiPhonepe size={42}/>
               </button>
-
 
 
 
@@ -243,26 +227,20 @@ export function PaymentStep({
                 onClick={openUPI}
                 className="
                   flex
-                  flex-col
                   items-center
-                  gap-2
+                  justify-center
                   rounded-xl
                   border
                   p-4
                   hover:bg-accent
                 "
               >
-
-                <SiPaytm size={35}/>
-
-                <span className="text-sm">
-                  Paytm
-                </span>
-
+                <SiPaytm size={42}/>
               </button>
 
 
             </div>
+
 
 
 
@@ -276,15 +254,19 @@ export function PaymentStep({
             ">
 
 
-              <p className="mb-2 font-medium">
+              <p className="
+                mb-2
+                font-medium
+              ">
                 UPI ID
               </p>
 
 
+
               <div className="
                 flex
-                gap-2
                 items-center
+                gap-2
               ">
 
 
@@ -325,24 +307,18 @@ export function PaymentStep({
             </div>
 
 
+
           </>
 
-        )
+        ) : (
 
-      }
-
-
-
-
-
-      {
-        !config?.upiId && (
 
           <p className="
             text-muted-foreground
           ">
-            Payment is not available for this trip.
+            Online payment is not available for this trip.
           </p>
+
 
         )
       }
@@ -367,4 +343,4 @@ export function PaymentStep({
 
   );
 
-}
+              }
