@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAuth } from "@/context/AuthContext";
 import { getAllTrips, type Trip } from "@/services/trips";
+import { getAllTrips, type Trip } from "@/services/trips";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
