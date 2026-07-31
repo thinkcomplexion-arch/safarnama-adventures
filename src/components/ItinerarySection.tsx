@@ -61,7 +61,7 @@ export function ItinerarySectionView({ section }: Props) {
     group
     relative
     overflow-hidden
-    rounded-3xl
+    rounded-2xl
     bg-gradient-to-br
     ${styles.gradient}
     backdrop-blur-xl
@@ -69,7 +69,7 @@ export function ItinerarySectionView({ section }: Props) {
     border
     border-white/20
     shadow-xl
-    p-6
+    p-4 md:p-6
     transition-all
     duration-700
     animate-in
@@ -97,7 +97,7 @@ export function ItinerarySectionView({ section }: Props) {
 
 
 
-      <div className="relative flex gap-5">
+      <div className="relative flex items-start gap-4">
 
 
         {/* Icon */}
@@ -105,14 +105,14 @@ export function ItinerarySectionView({ section }: Props) {
         <div
           className="
             flex
-            h-16
-            w-16
+            h-12
+            w-12
             shrink-0
             items-center
             justify-center
             rounded-2xl
             bg-white/20
-            text-3xl
+            text-2xl
             backdrop-blur-xl
             shadow-lg
             transition
