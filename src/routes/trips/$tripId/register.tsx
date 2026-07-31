@@ -1,56 +1,389 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+
+import {
+  getTripForm,
+  createRegistration,
+  type RegistrationField,
+} from "@/services/registration";
+
+import {
+  getTripById,
+  type Trip,
+} from "@/services/trips";
+
 
 export const Route = createFileRoute("/trips/$tripId/register")({
   head: () => ({
     meta: [
-      { title: "Trip Registration — Safarnama" },
       {
-        name: "description",
-        content: "Register for your Safarnama journey and secure your spot on an upcoming small-group departure.",
-      },
-      { property: "og:title", content: "Trip Registration — Safarnama" },
-      {
-        property: "og:description",
-        content: "Register for your Safarnama journey and secure your spot on an upcoming small-group departure.",
+        title: "Trip Registration — Safarnama",
       },
     ],
   }),
   component: RegistrationPage,
 });
 
+
 function RegistrationPage() {
+
   const { tripId } = Route.useParams();
 
+
+  const [trip, setTrip] = useState<Trip | null>(null);
+
+  const [fields, setFields] = useState<RegistrationField[]>([]);
+
+  const [formData, setFormData] =
+    useState<Record<string, any>>({});
+
+
+  const [loading, setLoading] =
+    useState(true);
+
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
+
+
+  useEffect(() => {
+
+    async function loadData(){
+
+      const tripData =
+        await getTripById(tripId);
+
+
+      const form =
+        await getTripForm(tripId);
+
+
+      setTrip(tripData);
+
+
+      if(form){
+        setFields(form.fields);
+      }
+
+
+      setLoading(false);
+
+    }
+
+
+    loadData();
+
+  },[tripId]);
+
+
+
+
+  function handleChange(
+    id:string,
+    value:any
+  ){
+
+    setFormData(prev=>({
+      ...prev,
+      [id]:value,
+    }));
+
+  }
+
+
+
+
+
+  async function handleSubmit(){
+
+    for(const field of fields){
+
+      if(
+        field.required &&
+        !formData[field.id]
+      ){
+
+        alert(
+          `${field.label} is required`
+        );
+
+        return;
+
+      }
+
+    }
+
+
+
+    try{
+
+      setSubmitting(true);
+
+
+      await createRegistration(
+        tripId,
+        {
+          responses:formData,
+
+          payment:{
+            totalAmount:
+              trip?.price || 0,
+
+            advanceAmount:0,
+
+            status:"pending",
+          }
+        }
+      );
+
+
+      alert(
+        "Registration submitted successfully"
+      );
+
+
+      // payment step will come here later
+
+
+    }
+    catch(error){
+
+      console.error(error);
+
+      alert(
+        "Something went wrong"
+      );
+
+    }
+    finally{
+
+      setSubmitting(false);
+
+    }
+
+  }
+
+
+
+
+
+  if(loading){
+
+    return(
+      <>
+        <Navbar/>
+
+        <div className="p-20 text-center">
+          Loading registration...
+        </div>
+
+        <Footer/>
+      </>
+    );
+
+  }
+
+
+
+
   return (
+
     <>
-      <Navbar />
+      <Navbar/>
 
-      <main className="mx-auto flex min-h-[70vh] max-w-3xl flex-col justify-center px-6 py-24">
-        <div className="rounded-3xl border border-border bg-card p-8 shadow-soft sm:p-12">
-          <h1 className="text-4xl font-bold sm:text-5xl">Trip Registration</h1>
 
-          <p className="mt-4 text-muted-foreground">
-            You're registering for trip{" "}
-            <span className="font-semibold text-foreground">{tripId}</span>.
+      <main className="
+        mx-auto
+        max-w-3xl
+        px-6
+        py-24
+      ">
+
+
+        <div className="
+          rounded-3xl
+          border
+          bg-card
+          p-8
+          shadow-soft
+        ">
+
+
+          <h1 className="
+            text-4xl
+            font-bold
+          ">
+            Register for {trip?.title}
+          </h1>
+
+
+          <p className="
+            mt-3
+            text-muted-foreground
+          ">
+            Fill your details to continue.
           </p>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            The registration form, payment and verification steps are coming soon.
-          </p>
+
+
+
+          <div className="
+            mt-8
+            space-y-5
+          ">
+
+
+          {fields.map(field=>(
+
+
+            <div key={field.id}>
+
+
+              <label className="
+                mb-2
+                block
+                font-medium
+              ">
+
+                {field.label}
+
+                {field.required && (
+                  <span>
+                    {" "}*
+                  </span>
+                )}
+
+              </label>
+
+
+
+              {
+              field.type === "textarea"
+              ?
+
+              <textarea
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  p-3
+                "
+                onChange={(e)=>
+                  handleChange(
+                    field.id,
+                    e.target.value
+                  )
+                }
+              />
+
+              :
+
+              <input
+
+                type={
+                  field.type==="phone"
+                  ?
+                  "tel"
+                  :
+                  field.type
+                }
+
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  p-3
+                "
+
+
+                onChange={(e)=>
+                  handleChange(
+                    field.id,
+                    e.target.value
+                  )
+                }
+
+              />
+
+              }
+
+
+            </div>
+
+
+          ))}
+
+
+          </div>
+
+
+
+
+          <button
+
+            disabled={submitting}
+
+            onClick={handleSubmit}
+
+            className="
+              mt-8
+              rounded-xl
+              bg-primary
+              px-6
+              py-3
+              text-white
+            "
+
+          >
+
+            {
+              submitting
+              ?
+              "Submitting..."
+              :
+              "Proceed to Payment"
+            }
+
+          </button>
+
+
 
           <Link
+
             to="/trips/$tripId"
-            params={{ tripId }}
-            className="mt-8 inline-flex items-center justify-center rounded-xl border border-input px-5 py-3 text-sm font-medium transition hover:bg-accent"
+
+            params={{
+              tripId
+            }}
+
+            className="
+              mt-5
+              block
+              text-center
+              text-sm
+            "
+
           >
+
             Back to trip details
+
           </Link>
+
+
         </div>
+
+
       </main>
 
-      <Footer />
+
+      <Footer/>
+
     </>
+
   );
-}
+
+  }
