@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
+import {
+  Smartphone,
+  WalletCards,
+  Copy,
+  Check,
+} from "lucide-react";
 
 import {
   getTripForm,
@@ -18,17 +24,17 @@ export function PaymentStep({
   tripPrice,
 }: PaymentStepProps) {
 
-
   const [config, setConfig] =
     useState<TripFormConfig | null>(null);
 
-
   const [amount, setAmount] =
-    useState<number>(0);
-
+    useState(0);
 
   const [upiLink, setUpiLink] =
-    useState<string>("");
+    useState("");
+
+  const [copied, setCopied] =
+    useState(false);
 
 
 
@@ -40,9 +46,7 @@ export function PaymentStep({
         await getTripForm(tripId);
 
 
-      if (!form) {
-        return;
-      }
+      if (!form) return;
 
 
       setConfig(form);
@@ -77,19 +81,35 @@ export function PaymentStep({
 
 
 
-  function copyUPI() {
+  function openUPI() {
 
-    if (config?.upiId) {
-
-      navigator.clipboard.writeText(
-        config.upiId
-      );
-
-      alert("UPI ID copied");
-
+    if (upiLink) {
+      window.location.href = upiLink;
     }
 
   }
+
+
+
+  function copyUPI() {
+
+    if (!config?.upiId) return;
+
+
+    navigator.clipboard.writeText(
+      config.upiId
+    );
+
+
+    setCopied(true);
+
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+
+  }
+
 
 
 
@@ -104,49 +124,145 @@ export function PaymentStep({
     ">
 
 
-      <h2 className="text-2xl font-bold">
-        Payment
+      <h2 className="
+        text-2xl
+        font-bold
+      ">
+        Complete Payment
       </h2>
 
 
 
-      <p>
-        Pay Advance Amount:
-        <strong>
-          {" "}₹{amount}
-        </strong>
-      </p>
+      <div className="
+        rounded-xl
+        bg-muted
+        p-4
+      ">
+
+        <p className="text-sm text-muted-foreground">
+          Pay Advance Amount
+        </p>
+
+
+        <p className="
+          text-3xl
+          font-bold
+        ">
+          ₹{amount}
+        </p>
+
+      </div>
+
 
 
 
       {
-        config?.upiId
-
-        ?
+        config?.upiId &&
 
         <>
 
 
-          {
-            upiLink && (
+          <div className="
+            flex
+            justify-center
+            rounded-2xl
+            bg-white
+            p-5
+          ">
 
-              <div className="
+            <QRCode
+              value={upiLink}
+              size={220}
+            />
+
+          </div>
+
+
+
+
+          <div className="
+            grid
+            grid-cols-3
+            gap-3
+          ">
+
+
+            <button
+              onClick={openUPI}
+              className="
                 flex
-                justify-center
+                flex-col
+                items-center
+                gap-2
                 rounded-xl
-                bg-white
+                border
                 p-4
-              ">
+                hover:bg-accent
+              "
+            >
 
-                <QRCode
-                  value={upiLink}
-                  size={220}
-                />
+              <Smartphone size={28}/>
 
-              </div>
+              <span className="text-sm">
+                Google Pay
+              </span>
 
-            )
-          }
+            </button>
+
+
+
+
+            <button
+              onClick={openUPI}
+              className="
+                flex
+                flex-col
+                items-center
+                gap-2
+                rounded-xl
+                border
+                p-4
+                hover:bg-accent
+              "
+            >
+
+              <WalletCards size={28}/>
+
+              <span className="text-sm">
+                PhonePe
+              </span>
+
+            </button>
+
+
+
+
+            <button
+              onClick={openUPI}
+              className="
+                flex
+                flex-col
+                items-center
+                gap-2
+                rounded-xl
+                border
+                p-4
+                hover:bg-accent
+              "
+            >
+
+              <WalletCards size={28}/>
+
+              <span className="text-sm">
+                Paytm
+              </span>
+
+            </button>
+
+
+          </div>
+
+
 
 
 
@@ -156,66 +272,100 @@ export function PaymentStep({
             p-4
           ">
 
-            <p className="font-medium">
+
+            <p className="
+              mb-2
+              text-sm
+              font-medium
+            ">
               UPI ID
             </p>
 
 
+
             <div className="
-              mt-2
               flex
+              w-full
+              items-center
               gap-2
             ">
 
-              <input
-                value={config.upiId}
-                readOnly
-                className="
-                  flex-1
-                  rounded-lg
-                  border
-                  p-2
-                "
-              />
+
+              <div className="
+                min-w-0
+                flex-1
+                rounded-lg
+                border
+                bg-muted
+                px-3
+                py-3
+              ">
+
+                <p className="
+                  truncate
+                  text-sm
+                ">
+                  {config.upiId}
+                </p>
+
+              </div>
+
+
 
 
               <button
                 onClick={copyUPI}
                 className="
+                  flex
+                  shrink-0
+                  items-center
+                  gap-2
                   rounded-lg
                   bg-primary
                   px-4
+                  py-3
                   text-white
                 "
               >
-                Copy
+
+                {
+                  copied
+                  ?
+                  <Check size={16}/>
+                  :
+                  <Copy size={16}/>
+                }
+
+
+                {
+                  copied
+                  ?
+                  "Copied"
+                  :
+                  "Copy"
+                }
+
+
               </button>
 
 
             </div>
+
 
           </div>
 
 
         </>
 
-
-        :
-
-        <p className="text-muted-foreground">
-          Online payment is not available for this trip.
-        </p>
-
       }
-
 
 
 
       <button
         className="
+          w-full
           rounded-xl
           bg-primary
-          px-6
           py-3
           text-white
         "
