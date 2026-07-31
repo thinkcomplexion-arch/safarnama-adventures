@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAuth } from "@/context/AuthContext";
+import { getAllTrips, type Trip } from "@/services/trips";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -9,6 +11,16 @@ export const Route = createFileRoute("/admin/")({
 function AdminDashboard() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
+  const [trips, setTrips] = useState<Trip[]>([]);
+
+useEffect(() => {
+  async function loadTrips() {
+    const data = await getAllTrips();
+    setTrips(data);
+  }
+
+  loadTrips();
+}, []);
 
   if (loading) {
     return (
@@ -61,14 +73,19 @@ if (profile.role !== "owner" || profile.active !== true) {
           Welcome back, {profile.name}
         </p>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-xl border bg-card p-6 shadow">
-            <h2 className="font-semibold">Trips</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              🚧 Coming Soon
-            </p>
-          </div>
+        <div className="rounded-xl border bg-card p-6 shadow">
+  <h2 className="font-semibold">
+    Trips
+  </h2>
 
+  <p className="mt-2 text-3xl font-bold">
+    {trips.length}
+  </p>
+
+  <p className="text-sm text-muted-foreground">
+    Total trips created
+  </p>
+</div>
           <div className="rounded-xl border bg-card p-6 shadow">
             <h2 className="font-semibold">Registrations</h2>
             <p className="mt-2 text-sm text-muted-foreground">
