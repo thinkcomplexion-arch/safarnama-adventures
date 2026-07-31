@@ -29,7 +29,7 @@ const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [editingCoverDay, setEditingCoverDay] = useState<string | null>(null);
-  const [sectionType, setSectionType] = useState<string>("");
+  const [sectionType, setSectionType] = useState<NonNullable<ItinerarySection["type"]> | "">("");
   
   useEffect(() => {
     async function load() {

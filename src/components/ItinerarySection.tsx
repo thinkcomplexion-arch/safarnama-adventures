@@ -42,7 +42,15 @@ export function ItinerarySectionView({ section }: Props) {
       gradient: "from-white/20 to-white/5",
     },
 
-  }[section.type || "description"];
+    gallery: {
+      icon: "🖼️",
+      gradient: "from-fuchsia-400/30 to-rose-400/10",
+    },
+
+  }[section.type || "description"] ?? {
+    icon: "✨",
+    gradient: "from-white/20 to-white/5",
+  };
 
 
 
