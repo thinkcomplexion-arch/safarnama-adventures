@@ -276,15 +276,13 @@ setLoading(false);
           {/* Content */}
           <div
             className="
-              relative
-              z-10
-              flex
               w-full
-              flex-col
-              justify-center
-              p-8
-              text-white
-              md:p-16
+px-4
+py-8
+text-white
+sm:px-6
+md:px-10
+lg:px-16
             "
           >
 
