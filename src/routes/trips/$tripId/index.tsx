@@ -4,7 +4,7 @@ import { MapPin, Clock, CalendarRange } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ItinerarySectionView } from "@/components/ItinerarySection";
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
   getTripById,
   type Trip,
@@ -26,7 +26,6 @@ function TripDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
 const [showItinerary, setShowItinerary] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchTrip() {
@@ -373,17 +372,13 @@ setLoading(false);
               </h3>
 
 
-              <button
-  onClick={() =>
-    navigate({
-      to: "/trips/$tripId/register",
-      params: { tripId },
-    })
-  }
-  className="mt-6 w-full rounded-xl bg-primary px-5 py-3 text-primary-foreground transition hover:opacity-90"
->
-  Book Now
-</button>
+              <Link
+                to="/trips/$tripId/register"
+                params={{ tripId }}
+                className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-primary-foreground transition hover:opacity-90"
+              >
+                Book Now
+              </Link>
 
             </div>
 
