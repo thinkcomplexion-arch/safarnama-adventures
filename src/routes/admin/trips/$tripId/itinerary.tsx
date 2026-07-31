@@ -152,10 +152,11 @@ const [sectionContent, setSectionContent] = useState("");
           }
 
           return {
-            ...section,
-            title: sectionTitle,
-            content: sectionContent,
-          };
+  ...section,
+  type: sectionType || undefined,
+  title: sectionTitle,
+  content: sectionContent,
+};
 
         }),
       };
