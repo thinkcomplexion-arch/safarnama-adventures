@@ -179,98 +179,187 @@ setLoading(false);
 
     <div className="space-y-10">
 
-      {itinerary.map((day) => (
+      {itinerary.map((day, index) => (
 
-        <div
-          key={day.id}
-          className="relative overflow-hidden rounded-[45px] border border-white/50 bg-gradient-to-br from-indigo-50 via-cyan-50 to-pink-50 shadow-2xl transition-all duration-500 hover:shadow-cyan-200"
-        >
+  <div
+    key={day.id}
+    className="
+      group
+      relative
+      overflow-hidden
+      rounded-[50px]
+      border
+      border-white/30
+      shadow-2xl
+      transition-all
+      duration-700
+      hover:-translate-y-3
+    "
+  >
 
-          {day.coverImage && (
-            <div className="relative h-[420px] overflow-hidden">
+    {/* Background Image */}
+    <div className="absolute inset-0">
 
-              <img
-                src={day.coverImage}
-                alt={`Day ${day.day}`}
-                className="h-full w-full object-cover transition duration-700 hover:scale-110"
-              />
+      {day.coverImage && (
+        <img
+          src={day.coverImage}
+          alt={`Day ${day.day}`}
+          className="
+            h-full
+            w-full
+            object-cover
+            transition
+            duration-[2000ms]
+            group-hover:scale-110
+          "
+        />
+      )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div
+        className="
+          absolute
+          inset-0
+          bg-gradient-to-br
+          from-indigo-900/80
+          via-purple-900/60
+          to-cyan-900/70
+        "
+      />
 
-              <div className="absolute bottom-8 left-8 text-white">
+    </div>
 
-                <span className="inline-flex rounded-full bg-white/20 px-6 py-3 text-sm font-bold uppercase tracking-wider backdrop-blur-xl shadow-lg">
-                  🌄 Day {day.day}
-                </span>
 
-                <h2 className="mt-4 text-5xl font-black leading-tight drop-shadow-lg md:text-6xl">
-                  {day.title || `Day ${day.day}`}
-                </h2>
 
-                <p className="mt-3 max-w-xl text-lg text-white/90">
-                  Explore this beautiful chapter of your journey.
+    {/* Content */}
+    <div className="relative z-10 p-8 md:p-12 text-white">
+
+
+      {/* Day Badge */}
+
+      <div
+        className="
+          inline-flex
+          rounded-full
+          bg-white/20
+          px-6
+          py-3
+          backdrop-blur-xl
+          shadow-lg
+          animate-pulse
+        "
+      >
+        🌄 DAY {day.day}
+      </div>
+
+
+
+      <h2
+        className="
+          mt-6
+          text-5xl
+          font-black
+          md:text-7xl
+          drop-shadow-2xl
+        "
+      >
+        {day.title || `Day ${day.day}`}
+      </h2>
+
+
+      <p className="mt-4 max-w-2xl text-lg text-white/90">
+        Discover the next chapter of your adventure.
+      </p>
+
+
+
+
+      {/* Sections */}
+
+      <div className="mt-12 space-y-8">
+
+
+        {day.sections.map((section) => (
+
+          <div
+            key={section.id}
+            className="
+              border-b
+              border-white/20
+              pb-6
+              last:border-none
+            "
+          >
+
+
+            <div className="flex items-center gap-4">
+
+              <div
+                className="
+                  flex
+                  h-14
+                  w-14
+                  items-center
+                  justify-center
+                  rounded-2xl
+                  bg-white/20
+                  text-3xl
+                  backdrop-blur-xl
+                "
+              >
+                {getSectionIcon(section.type)}
+              </div>
+
+
+              <div>
+
+                <h3 className="text-2xl font-bold">
+                  {section.title}
+                </h3>
+
+
+                <p
+                  className="
+                    text-sm
+                    uppercase
+                    tracking-widest
+                    text-white/70
+                  "
+                >
+                  {section.type}
                 </p>
 
               </div>
 
-            </div>
-          )}
-
-
-          <div className="p-8">
-
-            <div className="space-y-8">
-
-              {day.sections.map((section) => (                <div
-                  key={section.id}
-                  className="group relative overflow-hidden rounded-[32px] border bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                >
-
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/40 via-transparent to-purple-100/40 opacity-0 transition group-hover:opacity-100" />
-
-
-                  <div className="relative">
-
-                    <div className="flex items-center gap-4">
-
-                      <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-cyan-500 to-blue-600 text-3xl shadow-lg">
-                        {getSectionIcon(section.type)}
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="text-3xl font-extrabold text-slate-900">
-                          {section.title || "Untitled Section"}
-                        </h3>
-
-                        <p className="mt-1 text-sm font-medium text-slate-500 capitalize">
-                          {section.type || "Description"}
-                        </p>
-
-                      </div>
-
-                    </div>
-
-
-                    <p className="mt-6 whitespace-pre-wrap text-lg leading-relaxed text-slate-600">
-                      {section.content}
-                    </p>
-
-
-                  </div>
-
-                </div>
-
-              ))}
 
             </div>
+
+
+            <p
+              className="
+                mt-4
+                text-lg
+                leading-relaxed
+                text-white/90
+              "
+            >
+              {section.content}
+            </p>
+
 
           </div>
 
-        </div>
+        ))}
 
-      ))}
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+))}
 
     </div>
 
