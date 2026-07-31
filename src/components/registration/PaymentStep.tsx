@@ -16,12 +16,14 @@ import {
 interface PaymentStepProps {
   tripId: string;
   tripPrice: number;
+  onPaymentDone: () => void;
 }
 
 
 export function PaymentStep({
   tripId,
   tripPrice,
+  onPaymentDone,
 }: PaymentStepProps) {
 
 
@@ -327,6 +329,7 @@ export function PaymentStep({
 
 
       <button
+        onClick={onPaymentDone}
         className="
           w-full
           rounded-xl
