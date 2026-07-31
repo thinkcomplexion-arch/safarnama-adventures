@@ -29,6 +29,7 @@ const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [editingCoverDay, setEditingCoverDay] = useState<string | null>(null);
+  const [sectionType, setSectionType] = useState<string>("");
   
   useEffect(() => {
     async function load() {
@@ -74,10 +75,16 @@ const [sectionContent, setSectionContent] = useState("");
 
   try {
     const newSection = {
-      id: crypto.randomUUID(),
-      title: "",
-      content: "",
-    };
+  id: crypto.randomUUID(),
+
+  type: undefined,
+
+  title: "",
+
+  content: "",
+
+  images: [],
+};
 
     await updateItineraryDay(
       tripId,
@@ -559,6 +566,21 @@ setEditingCoverDay(null);
 
     <div className="mt-4 space-y-3">
 
+      <select
+  value={sectionType}
+  onChange={(e) => setSectionType(e.target.value)}
+  className="w-full rounded-xl border p-3"
+>
+  <option value="">Default Section</option>
+  <option value="description">Description</option>
+  <option value="places">Places to Visit</option>
+  <option value="gallery">Gallery</option>
+  <option value="meals">Meals</option>
+  <option value="stay">Stay</option>
+  <option value="transport">Transport</option>
+  <option value="highlights">Highlights</option>
+  <option value="tips">Travel Tips</option>
+</select>
       <input
         value={sectionTitle}
         onChange={(e) =>
@@ -622,6 +644,8 @@ setEditingCoverDay(null);
       setSectionContent(
         section.content || ""
       );
+
+      setSectionType(section.type || "");
 
     }}
     className="rounded-xl border px-4 py-2"
