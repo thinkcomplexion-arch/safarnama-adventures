@@ -110,7 +110,7 @@ if (profile.role !== "owner" || profile.active !== true) {
 
 
         <Link
-  to="/admin/registration"
+  to="/admin/registrations"
   className="rounded-xl border bg-card p-6 shadow"
 >
   <h2 className="font-semibold">
