@@ -13,7 +13,7 @@ import {
 import { Link, useRouterState } from "@tanstack/react-router";
 
 const menuItems = [
-  { title: "Dashboard", icon: LayoutDashboard, to: "/admin" },
+  { title: "Dashboard", icon: LayoutDashboard, to: "/admin/" },
   { title: "Trips", icon: Map, to: "/admin/trips" },
   { title: "Itineraries", icon: CalendarDays, to: "/admin/itineraries" },
   { title: "Registrations", icon: Users, to: "/admin/forms" },
