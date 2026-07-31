@@ -18,6 +18,7 @@ export const Route = createFileRoute("/admin/trips/")({
 
 function TripsPage() {
   const [createOpen, setCreateOpen] = useState(false);
+  const [editingTrip, setEditingTrip] = useState<any>(null);
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +51,10 @@ function TripsPage() {
           </div>
 
           <button
-  onClick={() => setCreateOpen(true)}
+  onClick={() => {
+  setEditingTrip(null);
+  setCreateOpen(true);
+}}
   className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-primary-foreground transition hover:opacity-90"
 >
   <Plus size={18} />
@@ -137,6 +141,15 @@ function TripsPage() {
 
 
           <div className="flex gap-2 pt-4">
+            <button
+  onClick={() => {
+    setEditingTrip(trip);
+    setCreateOpen(true);
+  }}
+  className="rounded-lg bg-amber-500 px-3 py-2 text-sm text-white"
+>
+  Edit
+</button>
 
               <Link
   to="/admin/trips/$tripId/itinerary"
@@ -185,10 +198,15 @@ function TripsPage() {
     
 
         <CreateTripDrawer
-          open={createOpen}
-          onClose={() => setCreateOpen(false)}
-        />
-
+  open={createOpen}
+  trip={editingTrip}
+  onSaved={loadTrips}
+  onClose={() => {
+    setCreateOpen(false);
+    setEditingTrip(null);
+    loadTrips();
+  }}
+/>
       </div>
     </AdminLayout>
   );
