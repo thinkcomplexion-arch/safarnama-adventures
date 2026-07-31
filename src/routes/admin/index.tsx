@@ -109,16 +109,18 @@ if (profile.role !== "owner" || profile.active !== true) {
 </div>
 
 
-        <div className="rounded-xl border bg-card p-6 shadow">
-          <h2 className="font-semibold">
-            Registrations
-          </h2>
+        <Link
+  to="/admin/registration"
+  className="rounded-xl border bg-card p-6 shadow"
+>
+  <h2 className="font-semibold">
+    Registrations
+  </h2>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            🚧 Coming Soon
-          </p>
-        </div>
-
+  <p className="mt-2 text-sm text-muted-foreground">
+    Manage trip registrations
+  </p>
+</Link>
 
         <div className="rounded-xl border bg-card p-6 shadow">
           <h2 className="font-semibold">
