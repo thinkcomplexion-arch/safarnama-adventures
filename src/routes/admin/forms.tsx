@@ -24,10 +24,8 @@ export const Route = createFileRoute("/admin/forms")({
 function RegistrationFormsPage() {
 
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [selectedTrip, setSelectedTrip] = useState("");
-  const [formExists, setFormExists] = useState(false);
 
-const [loadingForm, setLoadingForm] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState("");
 
   const [fields, setFields] = useState<RegistrationField[]>([
     {
@@ -56,11 +54,12 @@ const [loadingForm, setLoadingForm] = useState(false);
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
     async function loadTrips(){
 
-      const data = await getAllTrips();
+      const data =
+        await getAllTrips();
 
       setTrips(data);
 
@@ -72,54 +71,66 @@ const [loadingForm, setLoadingForm] = useState(false);
 
 
 
+
+
+  async function loadTripForm(tripId:string){
+
+    const form =
+      await getTripForm(tripId);
+
+
+    if(form){
+
+      setFields(form.fields);
+
+      setAdvancePercentage(
+        form.advancePercentage
+      );
+
+      setUpiId(
+        form.upiId
+      );
+
+      setWhatsappNumber(
+        form.paymentVerificationWhatsApp
+      );
+
+
+    }
+    else{
+
+      setFields([]);
+
+      setAdvancePercentage(50);
+
+      setUpiId("");
+
+      setWhatsappNumber("");
+
+    }
+
+  }
+
+
+
+
   function addField(){
 
     setFields([
       ...fields,
       {
         id: crypto.randomUUID(),
-        label: "New Field",
-        type: "text",
-        required: false,
+        label:"New Field",
+        type:"text",
+        required:false,
+        options:[],
       }
     ]);
 
   }
-async function loadTripForm(tripId: string) {
 
-  setLoadingForm(true);
 
-  const form = await getTripForm(tripId);
 
-  if (form) {
-
-    setFields(form.fields);
-
-    setAdvancePercentage(form.advancePercentage);
-
-    setUpiId(form.upiId);
-
-    setWhatsappNumber(form.paymentVerificationWhatsApp);
-
-    setFormExists(true);
-
-  } else {
-
-    setFormExists(false);
-
-    setFields([]);
-
-    setAdvancePercentage(50);
-
-    setUpiId("");
-
-    setWhatsappNumber("");
-
-  }
-
-  setLoadingForm(false);
-
-}
 
 
   function removeField(id:string){
@@ -134,6 +145,8 @@ async function loadTripForm(tripId: string) {
 
 
 
+
+
   function updateField(
     id:string,
     key:keyof RegistrationField,
@@ -142,14 +155,20 @@ async function loadTripForm(tripId: string) {
 
     setFields(
       fields.map(field=>
+
         field.id===id
+
         ?
+
         {
           ...field,
           [key]:value,
         }
+
         :
+
         field
+
       )
     );
 
@@ -157,11 +176,48 @@ async function loadTripForm(tripId: string) {
 
 
 
+
+
+  function updateOptions(
+    id:string,
+    value:string
+  ){
+
+    setFields(
+      fields.map(field=>
+
+        field.id===id
+
+        ?
+
+        {
+          ...field,
+          options:
+            value
+            .split(",")
+            .map(item=>item.trim()),
+        }
+
+        :
+
+        field
+
+      )
+    );
+
+  }
+
+
+
+
+
   async function saveForm(){
 
     if(!selectedTrip){
 
-      alert("Please select a trip");
+      alert(
+        "Please select a trip"
+      );
 
       return;
 
@@ -169,21 +225,34 @@ async function loadTripForm(tripId: string) {
 
 
     await saveTripForm(
+
       selectedTrip,
+
       {
+
         fields,
+
         paymentEnabled:true,
+
         advancePercentage,
+
         upiId,
+
         paymentVerificationWhatsApp:
           whatsappNumber,
+
       }
+
     );
 
 
-    alert("Registration form saved");
+    alert(
+      "Registration form saved"
+    );
 
   }
+
+
 
 
 
@@ -194,21 +263,14 @@ async function loadTripForm(tripId: string) {
       <div className="space-y-8">
 
 
-        <div>
-
-          <h1 className="text-3xl font-bold">
-            Registration Form Builder
-          </h1>
-
-          <p className="text-muted-foreground mt-2">
-            Create custom booking forms for every trip.
-          </p>
-
-        </div>
+        <h1 className="text-3xl font-bold">
+          Registration Form Builder
+        </h1>
 
 
 
-        <div className="rounded-3xl border bg-card p-6 space-y-6">
+
+        <div className="space-y-6">
 
 
           <div>
@@ -217,20 +279,32 @@ async function loadTripForm(tripId: string) {
               Select Trip
             </label>
 
+
             <select
+
               value={selectedTrip}
-              onChange={async (e) => {
 
-  const tripId = e.target.value;
+              onChange={async(e)=>{
 
-  setSelectedTrip(tripId);
+                const id =
+                  e.target.value;
 
-  if (tripId) {
-    await loadTripForm(tripId);
-  }
+                setSelectedTrip(id);
 
-}}
-              className="mt-2 w-full rounded-xl border p-3"
+                if(id){
+                  await loadTripForm(id);
+                }
+
+              }}
+
+              className="
+                mt-2
+                w-full
+                rounded-xl
+                border
+                p-3
+              "
+
             >
 
               <option value="">
@@ -238,24 +312,32 @@ async function loadTripForm(tripId: string) {
               </option>
 
 
-              {trips.map(trip=>(
+              {
+                trips.map(trip=>(
 
-                <option
-                  key={trip.id}
-                  value={trip.id}
-                >
-                  {trip.title}
-                </option>
+                  <option
+                    key={trip.id}
+                    value={trip.id}
+                  >
 
-              ))}
+                    {trip.title}
+
+                  </option>
+
+                ))
+              }
+
 
             </select>
+
 
           </div>
 
 
 
-          <div className="space-y-4">
+
+
+          <div className="space-y-5">
 
 
             <div className="flex justify-between">
@@ -266,90 +348,228 @@ async function loadTripForm(tripId: string) {
 
 
               <button
+
                 onClick={addField}
-                className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-white"
+
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  rounded-xl
+                  bg-primary
+                  px-4
+                  py-2
+                  text-white
+                "
+
               >
+
                 <Plus size={18}/>
+
                 Add Field
+
               </button>
+
 
             </div>
 
 
 
-            {fields.map(field=>(
-
-              <div
-                key={field.id}
-                className="rounded-xl border p-4 space-y-3"
-              >
-
-                <input
-                  value={field.label}
-                  onChange={(e)=>
-                    updateField(
-                      field.id,
-                      "label",
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-lg border p-2"
-                />
 
 
+            {
+              fields.map(field=>(
 
-                <select
-                  value={field.type}
-                  onChange={(e)=>
-                    updateField(
-                      field.id,
-                      "type",
-                      e.target.value
-                    )
-                  }
-                  className="rounded-lg border p-2"
+
+                <div
+                  key={field.id}
+                  className="
+                    rounded-xl
+                    border
+                    p-4
+                    space-y-3
+                  "
                 >
 
-                  <option value="text">
-                    Text
-                  </option>
 
-                  <option value="number">
-                    Number
-                  </option>
+                  <input
 
-                  <option value="phone">
-                    Phone
-                  </option>
+                    value={field.label}
 
-                  <option value="email">
-                    Email
-                  </option>
+                    onChange={(e)=>
+                      updateField(
+                        field.id,
+                        "label",
+                        e.target.value
+                      )
+                    }
 
-                  <option value="textarea">
-                    Text Area
-                  </option>
+                    className="
+                      w-full
+                      rounded-lg
+                      border
+                      p-2
+                    "
 
-                </select>
+                  />
 
 
 
-                <button
-                  onClick={()=>
-                    removeField(field.id)
+
+
+                  <select
+
+                    value={field.type}
+
+                    onChange={(e)=>
+                      updateField(
+                        field.id,
+                        "type",
+                        e.target.value
+                      )
+                    }
+
+                    className="
+                      rounded-lg
+                      border
+                      p-2
+                    "
+
+                  >
+
+                    <option value="text">
+                      Text
+                    </option>
+
+                    <option value="number">
+                      Number
+                    </option>
+
+                    <option value="phone">
+                      Phone
+                    </option>
+
+                    <option value="email">
+                      Email
+                    </option>
+
+                    <option value="textarea">
+                      Text Area
+                    </option>
+
+                    <option value="select">
+                      Dropdown
+                    </option>
+
+                    <option value="checkbox">
+                      Checkbox
+                    </option>
+
+
+                  </select>
+
+
+
+
+
+                  {
+                    field.type==="select" && (
+
+                      <input
+
+                        value={
+                          field.options?.join(", ")
+                          ||
+                          ""
+                        }
+
+                        onChange={(e)=>
+                          updateOptions(
+                            field.id,
+                            e.target.value
+                          )
+                        }
+
+                        placeholder="
+                          Options separated by comma
+                        "
+
+                        className="
+                          w-full
+                          rounded-lg
+                          border
+                          p-2
+                        "
+
+                      />
+
+                    )
                   }
-                  className="flex items-center gap-2 text-red-500"
-                >
-
-                  <Trash2 size={16}/>
-                  Remove
-
-                </button>
 
 
-              </div>
 
-            ))}
+
+
+                  <label className="
+                    flex
+                    items-center
+                    gap-2
+                  ">
+
+                    <input
+
+                      type="checkbox"
+
+                      checked={
+                        field.required
+                      }
+
+                      onChange={(e)=>
+                        updateField(
+                          field.id,
+                          "required",
+                          e.target.checked
+                        )
+                      }
+
+                    />
+
+                    Required
+
+                  </label>
+
+
+
+
+
+                  <button
+
+                    onClick={()=>
+                      removeField(field.id)
+                    }
+
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      text-red-500
+                    "
+
+                  >
+
+                    <Trash2 size={16}/>
+
+                    Remove
+
+                  </button>
+
+
+
+                </div>
+
+
+              ))
+            }
 
 
           </div>
@@ -357,43 +577,81 @@ async function loadTripForm(tripId: string) {
 
 
 
+
           <div className="space-y-4">
+
 
             <h2 className="text-xl font-bold">
               Payment Settings
             </h2>
 
 
+
             <input
+
               type="number"
+
               value={advancePercentage}
+
               onChange={(e)=>
                 setAdvancePercentage(
                   Number(e.target.value)
                 )
               }
+
               placeholder="Advance Percentage"
-              className="w-full rounded-xl border p-3"
+
+              className="
+                w-full
+                rounded-xl
+                border
+                p-3
+              "
+
             />
 
 
+
             <input
+
               value={upiId}
+
               onChange={(e)=>
                 setUpiId(e.target.value)
               }
+
               placeholder="UPI ID"
-              className="w-full rounded-xl border p-3"
+
+              className="
+                w-full
+                rounded-xl
+                border
+                p-3
+              "
+
             />
 
 
+
             <input
+
               value={whatsappNumber}
+
               onChange={(e)=>
-                setWhatsappNumber(e.target.value)
+                setWhatsappNumber(
+                  e.target.value
+                )
               }
+
               placeholder="WhatsApp Number with country code"
-              className="w-full rounded-xl border p-3"
+
+              className="
+                w-full
+                rounded-xl
+                border
+                p-3
+              "
+
             />
 
 
@@ -403,10 +661,21 @@ async function loadTripForm(tripId: string) {
 
 
           <button
+
             onClick={saveForm}
-            className="rounded-xl bg-primary px-6 py-3 text-white"
+
+            className="
+              rounded-xl
+              bg-primary
+              px-6
+              py-3
+              text-white
+            "
+
           >
+
             Save Registration Form
+
           </button>
 
 
