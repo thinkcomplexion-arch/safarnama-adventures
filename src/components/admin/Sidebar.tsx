@@ -16,7 +16,7 @@ const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, to: "/admin" },
   { title: "Trips", icon: Map, to: "/admin/trips" },
   { title: "Itineraries", icon: CalendarDays, to: "/admin/itineraries" },
-  { title: "Registrations", icon: Users, to: "/admin/registrations" },
+  { title: "Registrations", icon: Users, to: "/admin/forms" },
   { title: "Finance", icon: CreditCard, to: "/admin/finance" },
   { title: "Gallery", icon: Image, to: "/admin/gallery" },
   { title: "Reviews", icon: MessageSquare, to: "/admin/reviews" },
