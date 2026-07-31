@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import QRCode from "qrcode";
+import QRCode from "react-qr-code";
 
 import {
   getTripForm,
@@ -77,28 +77,7 @@ export function PaymentStep({
 
 
 
-        const generatedQR =
-          await QRCode.toDataURL(
-            upiLink
-          );
-
-
-        setQrCode(generatedQR);
-
-      }
-
-
-    }
-
-
-    loadPaymentData();
-
-
-  },[
-    tripId,
-    tripPrice
-  ]);
-
+        l
 
 
 
