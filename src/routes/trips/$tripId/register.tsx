@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaymentStep } from "@/components/registration/PaymentStep";
-
+import { VerificationStep } from "@/components/registration/VerificationStep";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
@@ -9,6 +9,7 @@ import {
   getTripForm,
   createRegistration,
   type RegistrationField,
+  type TripFormConfig,
 } from "@/services/registration";
 
 import {
@@ -37,7 +38,7 @@ function RegistrationPage() {
   const [trip, setTrip] = useState<Trip | null>(null);
 
   const [fields, setFields] = useState<RegistrationField[]>([]);
-
+const [formConfig, setFormConfig] =  useState<TripFormConfig | null>(null);
   const [formData, setFormData] =
     useState<Record<string, any>>({});
 
@@ -67,7 +68,8 @@ const [step, setStep] = useState(1);
 
 
       if(form){
-        setFields(form.fields);
+  setFields(form.fields);
+  setFormConfig(form);
       }
 
 
@@ -373,14 +375,15 @@ const [step, setStep] = useState(1);
   <div className="mt-8">
 
     <VerificationStep
-      whatsappNumber="YOUR_WHATSAPP_NUMBER"
-      tripName={trip?.title || ""}
-      amount={trip?.price || 0}
-      userName={
-        formData.name || "Guest"
-      }
-    />
-
+  whatsappNumber={
+    formConfig?.paymentVerificationWhatsApp || ""
+  }
+  tripName={trip?.title || ""}
+  amount={trip?.price || 0}
+  userName={
+    formData.fullName || "Guest"
+  }
+/>
   </div>
 
 )}
