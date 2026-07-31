@@ -259,32 +259,39 @@ setLoading(false);
               />
             )}
 
-            <div
-              className="
-                absolute
-                inset-0
-                bg-gradient-to-br
-                from-indigo-950/90
-                via-purple-900/70
-                to-cyan-900/80
-              "
-            />
+                 <div
+  className="
+    absolute
+    inset-0
+    bg-gradient-to-t
+    from-black/75
+    via-black/20
+    to-transparent
+  "
+/>
 
           </div>
 
 
           {/* Content */}
           <div
-            className="
-              w-full
-px-4
-py-8
-text-white
-sm:px-6
-md:px-10
-lg:px-16
-            "
-          >
+  className="
+    relative
+    z-10
+    flex
+    min-h-screen
+    w-full
+    flex-col
+    justify-end
+    px-4
+    pb-8
+    pt-[45vh]
+    text-white
+    sm:px-6
+    md:px-10
+    lg:px-16
+  "
+>
 
             {/* Day Badge */}
             <div
