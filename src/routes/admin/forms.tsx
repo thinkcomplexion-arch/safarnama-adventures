@@ -16,7 +16,7 @@ import {
 } from "@/services/registration";
 
 
-export const Route = createFileRoute("/admin/forms/")({
+export const Route = createFileRoute("/admin/forms")({
   component: RegistrationFormsPage,
 });
 

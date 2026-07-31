@@ -14,7 +14,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TripsTripIdRouteImport } from './routes/trips/$tripId'
+import { Route as AdminFormsRouteImport } from './routes/admin/forms'
 import { Route as AdminTripsIndexRouteImport } from './routes/admin/trips/index'
+import { Route as TripsTripIdRegisterRouteImport } from './routes/trips/$tripId/register'
 import { Route as AdminTripsTripIdItineraryRouteImport } from './routes/admin/trips/$tripId/itinerary'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -42,10 +44,20 @@ const TripsTripIdRoute = TripsTripIdRouteImport.update({
   path: '/trips/$tripId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFormsRoute = AdminFormsRouteImport.update({
+  id: '/admin/forms',
+  path: '/admin/forms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTripsIndexRoute = AdminTripsIndexRouteImport.update({
   id: '/admin/trips/',
   path: '/admin/trips/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TripsTripIdRegisterRoute = TripsTripIdRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => TripsTripIdRoute,
 } as any)
 const AdminTripsTripIdItineraryRoute =
   AdminTripsTripIdItineraryRouteImport.update({
@@ -57,18 +69,22 @@ const AdminTripsTripIdItineraryRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/trips/$tripId': typeof TripsTripIdRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/trips/$tripId/register': typeof TripsTripIdRegisterRoute
   '/admin/trips/': typeof AdminTripsIndexRoute
   '/admin/trips/$tripId/itinerary': typeof AdminTripsTripIdItineraryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/trips/$tripId': typeof TripsTripIdRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
+  '/trips/$tripId/register': typeof TripsTripIdRegisterRoute
   '/admin/trips': typeof AdminTripsIndexRoute
   '/admin/trips/$tripId/itinerary': typeof AdminTripsTripIdItineraryRoute
 }
@@ -76,9 +92,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/trips/$tripId': typeof TripsTripIdRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/trips/$tripId/register': typeof TripsTripIdRegisterRoute
   '/admin/trips/': typeof AdminTripsIndexRoute
   '/admin/trips/$tripId/itinerary': typeof AdminTripsTripIdItineraryRoute
 }
@@ -87,27 +105,33 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/sitemap.xml'
+    | '/admin/forms'
     | '/trips/$tripId'
     | '/admin/'
     | '/login/'
+    | '/trips/$tripId/register'
     | '/admin/trips/'
     | '/admin/trips/$tripId/itinerary'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sitemap.xml'
+    | '/admin/forms'
     | '/trips/$tripId'
     | '/admin'
     | '/login'
+    | '/trips/$tripId/register'
     | '/admin/trips'
     | '/admin/trips/$tripId/itinerary'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
+    | '/admin/forms'
     | '/trips/$tripId'
     | '/admin/'
     | '/login/'
+    | '/trips/$tripId/register'
     | '/admin/trips/'
     | '/admin/trips/$tripId/itinerary'
   fileRoutesById: FileRoutesById
@@ -115,7 +139,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TripsTripIdRoute: typeof TripsTripIdRoute
+  AdminFormsRoute: typeof AdminFormsRoute
+  TripsTripIdRoute: typeof TripsTripIdRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   AdminTripsIndexRoute: typeof AdminTripsIndexRoute
@@ -159,12 +184,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsTripIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/forms': {
+      id: '/admin/forms'
+      path: '/admin/forms'
+      fullPath: '/admin/forms'
+      preLoaderRoute: typeof AdminFormsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/trips/': {
       id: '/admin/trips/'
       path: '/admin/trips'
       fullPath: '/admin/trips/'
       preLoaderRoute: typeof AdminTripsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/trips/$tripId/register': {
+      id: '/trips/$tripId/register'
+      path: '/register'
+      fullPath: '/trips/$tripId/register'
+      preLoaderRoute: typeof TripsTripIdRegisterRouteImport
+      parentRoute: typeof TripsTripIdRoute
     }
     '/admin/trips/$tripId/itinerary': {
       id: '/admin/trips/$tripId/itinerary'
@@ -176,10 +215,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface TripsTripIdRouteChildren {
+  TripsTripIdRegisterRoute: typeof TripsTripIdRegisterRoute
+}
+
+const TripsTripIdRouteChildren: TripsTripIdRouteChildren = {
+  TripsTripIdRegisterRoute: TripsTripIdRegisterRoute,
+}
+
+const TripsTripIdRouteWithChildren = TripsTripIdRoute._addFileChildren(
+  TripsTripIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TripsTripIdRoute: TripsTripIdRoute,
+  AdminFormsRoute: AdminFormsRoute,
+  TripsTripIdRoute: TripsTripIdRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   AdminTripsIndexRoute: AdminTripsIndexRoute,
@@ -188,4 +240,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-  
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
