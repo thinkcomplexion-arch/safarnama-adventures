@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
+
 import {
-  Smartphone,
-  WalletCards,
-  Copy,
-  Check,
-} from "lucide-react";
+  SiGooglepay,
+  SiPhonepe,
+  SiPaytm,
+} from "react-icons/si";
 
 import {
   getTripForm,
@@ -24,17 +24,17 @@ export function PaymentStep({
   tripPrice,
 }: PaymentStepProps) {
 
+
   const [config, setConfig] =
     useState<TripFormConfig | null>(null);
+
 
   const [amount, setAmount] =
     useState(0);
 
+
   const [upiLink, setUpiLink] =
     useState("");
-
-  const [copied, setCopied] =
-    useState(false);
 
 
 
@@ -52,20 +52,20 @@ export function PaymentStep({
       setConfig(form);
 
 
-      const advanceAmount =
+      const advance =
         Math.round(
           (tripPrice * form.advancePercentage) / 100
         );
 
 
-      setAmount(advanceAmount);
+      setAmount(advance);
 
 
 
       if (form.upiId) {
 
         const link =
-          `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advanceAmount}&cu=INR`;
+          `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advance}&cu=INR`;
 
         setUpiLink(link);
 
@@ -81,32 +81,30 @@ export function PaymentStep({
 
 
 
-  function openUPI() {
+  function copyUPI(){
 
-    if (upiLink) {
-      window.location.href = upiLink;
+    if(config?.upiId){
+
+      navigator.clipboard.writeText(
+        config.upiId
+      );
+
+      alert("UPI ID copied");
+
     }
 
   }
 
 
 
-  function copyUPI() {
 
-    if (!config?.upiId) return;
+  function openUPI(){
 
+    if(upiLink){
 
-    navigator.clipboard.writeText(
-      config.upiId
-    );
+      window.location.href = upiLink;
 
-
-    setCopied(true);
-
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    }
 
   }
 
@@ -128,28 +126,30 @@ export function PaymentStep({
         text-2xl
         font-bold
       ">
-        Complete Payment
+        Payment
       </h2>
 
 
 
       <div className="
         rounded-xl
-        bg-muted
+        border
         p-4
       ">
 
-        <p className="text-sm text-muted-foreground">
-          Pay Advance Amount
+        <p>
+          Advance Amount
         </p>
 
 
         <p className="
           text-3xl
           font-bold
+          mt-2
         ">
           ₹{amount}
         </p>
+
 
       </div>
 
@@ -157,194 +157,107 @@ export function PaymentStep({
 
 
       {
-        config?.upiId &&
+        config?.upiId && (
 
-        <>
-
-
-          <div className="
-            flex
-            justify-center
-            rounded-2xl
-            bg-white
-            p-5
-          ">
-
-            <QRCode
-              value={upiLink}
-              size={220}
-            />
-
-          </div>
-
-
-
-
-          <div className="
-            grid
-            grid-cols-3
-            gap-3
-          ">
-
-
-            <button
-              onClick={openUPI}
-              className="
-                flex
-                flex-col
-                items-center
-                gap-2
-                rounded-xl
-                border
-                p-4
-                hover:bg-accent
-              "
-            >
-
-              <Smartphone size={28}/>
-
-              <span className="text-sm">
-                Google Pay
-              </span>
-
-            </button>
-
-
-
-
-            <button
-              onClick={openUPI}
-              className="
-                flex
-                flex-col
-                items-center
-                gap-2
-                rounded-xl
-                border
-                p-4
-                hover:bg-accent
-              "
-            >
-
-              <WalletCards size={28}/>
-
-              <span className="text-sm">
-                PhonePe
-              </span>
-
-            </button>
-
-
-
-
-            <button
-              onClick={openUPI}
-              className="
-                flex
-                flex-col
-                items-center
-                gap-2
-                rounded-xl
-                border
-                p-4
-                hover:bg-accent
-              "
-            >
-
-              <WalletCards size={28}/>
-
-              <span className="text-sm">
-                Paytm
-              </span>
-
-            </button>
-
-
-          </div>
-
-
-
-
-
-          <div className="
-            rounded-xl
-            border
-            p-4
-          ">
-
-
-            <p className="
-              mb-2
-              text-sm
-              font-medium
-            ">
-              UPI ID
-            </p>
-
+          <>
 
 
             <div className="
               flex
-              w-full
-              items-center
-              gap-2
+              justify-center
+              rounded-xl
+              bg-white
+              p-5
+            ">
+
+              <QRCode
+                value={upiLink}
+                size={220}
+              />
+
+            </div>
+
+
+
+
+            <div className="
+              grid
+              grid-cols-3
+              gap-3
             ">
 
 
-              <div className="
-                min-w-0
-                flex-1
-                rounded-lg
-                border
-                bg-muted
-                px-3
-                py-3
-              ">
+              <button
+                onClick={openUPI}
+                className="
+                  flex
+                  flex-col
+                  items-center
+                  gap-2
+                  rounded-xl
+                  border
+                  p-4
+                  hover:bg-accent
+                "
+              >
 
-                <p className="
-                  truncate
-                  text-sm
-                ">
-                  {config.upiId}
-                </p>
+                <SiGooglepay size={35}/>
 
-              </div>
+                <span className="text-sm">
+                  Google Pay
+                </span>
+
+              </button>
+
 
 
 
 
               <button
-                onClick={copyUPI}
+                onClick={openUPI}
                 className="
                   flex
-                  shrink-0
+                  flex-col
                   items-center
                   gap-2
-                  rounded-lg
-                  bg-primary
-                  px-4
-                  py-3
-                  text-white
+                  rounded-xl
+                  border
+                  p-4
+                  hover:bg-accent
                 "
               >
 
-                {
-                  copied
-                  ?
-                  <Check size={16}/>
-                  :
-                  <Copy size={16}/>
-                }
+                <SiPhonepe size={35}/>
+
+                <span className="text-sm">
+                  PhonePe
+                </span>
+
+              </button>
 
 
-                {
-                  copied
-                  ?
-                  "Copied"
-                  :
-                  "Copy"
-                }
 
+
+
+              <button
+                onClick={openUPI}
+                className="
+                  flex
+                  flex-col
+                  items-center
+                  gap-2
+                  rounded-xl
+                  border
+                  p-4
+                  hover:bg-accent
+                "
+              >
+
+                <SiPaytm size={35}/>
+
+                <span className="text-sm">
+                  Paytm
+                </span>
 
               </button>
 
@@ -352,12 +265,88 @@ export function PaymentStep({
             </div>
 
 
-          </div>
 
 
-        </>
+
+            <div className="
+              rounded-xl
+              border
+              p-4
+              overflow-hidden
+            ">
+
+
+              <p className="mb-2 font-medium">
+                UPI ID
+              </p>
+
+
+              <div className="
+                flex
+                gap-2
+                items-center
+              ">
+
+
+                <input
+                  value={config.upiId}
+                  readOnly
+                  className="
+                    min-w-0
+                    flex-1
+                    rounded-lg
+                    border
+                    px-3
+                    py-2
+                    text-sm
+                  "
+                />
+
+
+
+                <button
+                  onClick={copyUPI}
+                  className="
+                    shrink-0
+                    rounded-lg
+                    bg-primary
+                    px-4
+                    py-2
+                    text-white
+                  "
+                >
+                  Copy
+                </button>
+
+
+              </div>
+
+
+            </div>
+
+
+          </>
+
+        )
 
       }
+
+
+
+
+
+      {
+        !config?.upiId && (
+
+          <p className="
+            text-muted-foreground
+          ">
+            Payment is not available for this trip.
+          </p>
+
+        )
+      }
+
 
 
 
@@ -372,7 +361,6 @@ export function PaymentStep({
       >
         I Have Paid
       </button>
-
 
 
     </div>
