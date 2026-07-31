@@ -361,11 +361,30 @@ const [step, setStep] = useState(1);
     <PaymentStep
       tripId={tripId}
       tripPrice={trip?.price || 0}
+      onPaymentDone={() => setStep(3)}
     />
 
   </div>
 
 )}
+
+          {step === 3 && (
+
+  <div className="mt-8">
+
+    <VerificationStep
+      whatsappNumber="YOUR_WHATSAPP_NUMBER"
+      tripName={trip?.title || ""}
+      amount={trip?.price || 0}
+      userName={
+        formData.name || "Guest"
+      }
+    />
+
+  </div>
+
+)}
+          
           <Link
 
             to="/trips/$tripId"
