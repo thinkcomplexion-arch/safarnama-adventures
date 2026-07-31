@@ -1,0 +1,259 @@
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
+
+import {
+  getTripForm,
+  type TripFormConfig,
+} from "@/services/registration";
+
+
+interface PaymentStepProps {
+
+  tripId: string;
+
+  tripPrice: number;
+
+}
+
+
+export function PaymentStep({
+  tripId,
+  tripPrice,
+}: PaymentStepProps) {
+
+
+  const [config, setConfig] =
+    useState<TripFormConfig | null>(null);
+
+
+  const [qrCode, setQrCode] =
+    useState<string>("");
+
+
+  const [amount, setAmount] =
+    useState<number>(0);
+
+
+
+  useEffect(() => {
+
+    async function loadPaymentData() {
+
+
+      const form =
+        await getTripForm(tripId);
+
+
+
+      if (!form) {
+        return;
+      }
+
+
+
+      setConfig(form);
+
+
+
+      // Calculate advance amount
+
+      const advanceAmount =
+        Math.round(
+          (tripPrice * form.advancePercentage) / 100
+        );
+
+
+      setAmount(advanceAmount);
+
+
+
+      // Generate QR only when UPI exists
+
+      if(form.upiId){
+
+
+        const upiLink =
+          `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advanceAmount}&cu=INR`;
+
+
+
+        const generatedQR =
+          await QRCode.toDataURL(
+            upiLink
+          );
+
+
+        setQrCode(generatedQR);
+
+      }
+
+
+    }
+
+
+    loadPaymentData();
+
+
+  },[
+    tripId,
+    tripPrice
+  ]);
+
+
+
+
+  function copyUPI(){
+
+    if(config?.upiId){
+
+      navigator.clipboard.writeText(
+        config.upiId
+      );
+
+
+      alert(
+        "UPI ID copied"
+      );
+
+    }
+
+  }
+
+
+
+
+
+  return (
+
+    <div className="
+      space-y-6
+      rounded-3xl
+      border
+      bg-card
+      p-6
+    ">
+
+
+      <h2 className="
+        text-2xl
+        font-bold
+      ">
+        Payment
+      </h2>
+
+
+
+      <p>
+        Pay Advance Amount:
+        <strong>
+          {" "}₹{amount}
+        </strong>
+      </p>
+
+
+
+
+      {
+        config?.upiId
+        ?
+
+        <>
+
+          {
+            qrCode && (
+
+              <img
+                src={qrCode}
+                alt="Payment QR Code"
+                className="
+                  mx-auto
+                  h-64
+                  w-64
+                  rounded-xl
+                "
+              />
+
+            )
+          }
+
+
+
+          <div className="
+            rounded-xl
+            border
+            p-4
+          ">
+
+            <p className="font-medium">
+              UPI ID
+            </p>
+
+
+            <div className="
+              mt-2
+              flex
+              gap-2
+            ">
+
+
+              <input
+                value={config.upiId}
+                readOnly
+                className="
+                  flex-1
+                  rounded-lg
+                  border
+                  p-2
+                "
+              />
+
+
+              <button
+                onClick={copyUPI}
+                className="
+                  rounded-lg
+                  bg-primary
+                  px-4
+                  text-white
+                "
+              >
+                Copy
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+        </>
+
+        :
+
+        <p className="text-muted-foreground">
+          Online payment is not available for this trip.
+        </p>
+
+      }
+
+
+
+      <button
+        className="
+          rounded-xl
+          bg-primary
+          px-6
+          py-3
+          text-white
+        "
+      >
+        I Have Paid
+      </button>
+
+
+    </div>
+
+  );
+
+          }
