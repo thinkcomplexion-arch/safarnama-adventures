@@ -20,11 +20,15 @@ export interface ItinerarySection {
 
 export interface ItineraryDay {
   id?: string;
+
   day: number;
+
+  title: string;
+
   coverImage: string;
+
   sections: ItinerarySection[];
 }
-
 export async function getItinerary(tripId: string) {
   const q = query(
     collection(db, "trips", tripId, "itinerary"),
