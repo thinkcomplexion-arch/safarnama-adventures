@@ -372,9 +372,13 @@ setLoading(false);
             {/* Booking Card */}
             <div className="h-fit rounded-3xl border p-6 shadow-lg">
 
-              <h3 className="text-3xl font-bold">
-                {trip.price}
-              </h3>
+              <h3 className="text-3xl font-bold text-primary">
+  ₹{Number(trip.price).toLocaleString("en-IN")}
+</h3>
+
+<p className="mt-2 text-sm text-muted-foreground">
+  Per Person
+</p>
 
 
               <Link
