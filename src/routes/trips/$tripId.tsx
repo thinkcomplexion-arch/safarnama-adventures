@@ -258,7 +258,7 @@ hover:shadow-cyan-200
   </div>
 )}
 
-      <div className="p-8">
+<div className="p-8">
 
         <div className="space-y-8">
 
