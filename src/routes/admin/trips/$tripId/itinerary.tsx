@@ -7,6 +7,7 @@ import {
   updateItineraryDay,
   deleteItineraryDay,
   type ItineraryDay,
+  type ItinerarySection,
 } from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
 
@@ -567,7 +568,9 @@ setEditingCoverDay(null);
 
       <select
   value={sectionType}
-  onChange={(e) => setSectionType(e.target.value)}
+  onChange={(e) =>
+    setSectionType(e.target.value as NonNullable<ItinerarySection["type"]> | "")
+  }
   className="w-full rounded-xl border p-3"
 >
   <option value="">Default Section</option>
