@@ -196,7 +196,7 @@ shadow-2xl
 transition-all
 duration-500
 hover:shadow-cyan-200
-"
+">
       {/* Cover Image */}
       {day.coverImage && (
   <div className="relative h-[420px] overflow-hidden">
