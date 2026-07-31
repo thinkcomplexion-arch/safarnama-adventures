@@ -28,12 +28,19 @@ export type RegistrationFieldType =
 
 
 export interface RegistrationField {
+
   id: string;
+
   label: string;
+
   type: RegistrationFieldType;
+
   required: boolean;
+
   options?: string[];
+
 }
+
 
 
 // -----------------------------
@@ -57,11 +64,13 @@ export interface TripFormConfig {
   createdAt?: unknown;
 
   updatedAt?: unknown;
+
 }
 
 
+
 // -----------------------------
-// Registration Data
+// Payment Types
 // -----------------------------
 
 export type PaymentStatus =
@@ -70,27 +79,60 @@ export type PaymentStatus =
   | "rejected";
 
 
+export type PaymentStage =
+  | "pending"
+  | "paid";
+
+
+
+// -----------------------------
+// Registration Data
+// -----------------------------
+
 export interface Registration {
+
 
   id: string;
 
+
   tripId: string;
+
 
   responses: Record<string, unknown>;
 
+
+
   payment: {
+
 
     totalAmount: number;
 
+
     advanceAmount: number;
+
 
     status: PaymentStatus;
 
+
+
+    // New payment tracking
+
+    advanceStatus?: PaymentStage;
+
+
+    remainingStatus?: PaymentStage;
+
+
   };
+
+
 
   createdAt?: unknown;
 
+
   verifiedAt?: unknown;
+
+
 }
 
 
@@ -100,69 +142,115 @@ export interface Registration {
 // =================================================
 
 
-// Get registration form of a trip
 
 export async function getTripForm(
-  tripId: string
-): Promise<TripFormConfig | null> {
+  tripId:string
+):Promise<TripFormConfig | null>{
 
-  const ref = doc(db, "tripForms", tripId);
+
+  const ref = doc(
+    db,
+    "tripForms",
+    tripId
+  );
+
 
   const snapshot = await getDoc(ref);
 
 
-  if (!snapshot.exists()) {
+
+  if(!snapshot.exists()){
+
     return null;
+
   }
 
 
+
   return {
+
     tripId,
-    ...(snapshot.data() as Omit<TripFormConfig, "tripId">),
+
+    ...(snapshot.data() as Omit<
+      TripFormConfig,
+      "tripId"
+    >),
+
   };
+
+
 }
 
 
 
-// Create / Update registration form
+
 
 export async function saveTripForm(
-  tripId: string,
-  data: Omit<
-    TripFormConfig,
-    "tripId" | "createdAt" | "updatedAt"
-  >
-) {
 
-  const ref = doc(db, "tripForms", tripId);
+  tripId:string,
+
+  data:Omit<
+    TripFormConfig,
+    "tripId" |
+    "createdAt" |
+    "updatedAt"
+  >
+
+){
+
+
+  const ref = doc(
+    db,
+    "tripForms",
+    tripId
+  );
+
 
 
   return setDoc(
+
     ref,
+
     {
+
       ...data,
-      updatedAt: serverTimestamp(),
-      createdAt: serverTimestamp(),
+
+      updatedAt:serverTimestamp(),
+
+      createdAt:serverTimestamp(),
+
     },
+
+
     {
-      merge: true,
+      merge:true,
     }
+
   );
+
 }
 
 
 
-// Delete registration form
+
 
 export async function deleteTripForm(
-  tripId: string
-) {
+  tripId:string
+){
 
   return deleteDoc(
-    doc(db, "tripForms", tripId)
+
+    doc(
+      db,
+      "tripForms",
+      tripId
+    )
+
   );
 
 }
+
+
 
 
 
@@ -171,93 +259,236 @@ export async function deleteTripForm(
 // =================================================
 
 
-// Create user registration
+
 
 export async function createRegistration(
 
-  tripId: string,
+  tripId:string,
 
-  data: Omit<Registration, "id" | "tripId">
+  data:Omit<
+    Registration,
+    "id" |
+    "tripId"
+  >
 
-) {
+){
 
-  const registrationsRef = collection(
-    db,
-    "trips",
-    tripId,
-    "registrations"
-  );
+
+  const registrationsRef =
+    collection(
+      db,
+      "trips",
+      tripId,
+      "registrations"
+    );
+
 
 
   return addDoc(
+
     registrationsRef,
+
     {
+
       ...data,
+
 
       tripId,
 
-      createdAt: serverTimestamp(),
+
+      createdAt:serverTimestamp(),
+
 
     }
+
   );
+
 
 }
 
 
 
-// Get all registrations of a trip
+
+
 
 export async function getTripRegistrations(
 
-  tripId: string
+  tripId:string
 
-): Promise<Registration[]> {
-
-
-  const ref = collection(
-    db,
-    "trips",
-    tripId,
-    "registrations"
-  );
+):Promise<Registration[]>{
 
 
-  const snapshot = await getDocs(ref);
+  const ref =
+    collection(
+
+      db,
+
+      "trips",
+
+      tripId,
+
+      "registrations"
+
+    );
 
 
 
-  return snapshot.docs.map((doc) => ({
+  const snapshot =
+    await getDocs(ref);
 
-    id: doc.id,
 
-    ...(doc.data() as Omit<Registration, "id">),
+
+
+  return snapshot.docs.map(doc => ({
+
+
+    id:doc.id,
+
+
+    ...(doc.data() as Omit<
+      Registration,
+      "id"
+    >),
+
 
   }));
+
 
 }
 
 
 
-// Update payment status
+
+
+
+
+// =================================================
+// ADMIN - ALL REGISTRATIONS
+// =================================================
+
+
+
+export async function getAllTripRegistrations(){
+
+  
+  const tripsSnapshot =
+    await getDocs(
+      collection(
+        db,
+        "trips"
+      )
+    );
+
+
+
+  const registrations:any[] = [];
+
+
+
+
+  for(
+    const tripDoc of tripsSnapshot.docs
+  ){
+
+
+    const registrationsSnapshot =
+      await getDocs(
+
+        collection(
+
+          db,
+
+          "trips",
+
+          tripDoc.id,
+
+          "registrations"
+
+        )
+
+      );
+
+
+
+    registrationsSnapshot.docs.forEach(
+      (regDoc)=>{
+
+
+        registrations.push({
+
+
+          id:regDoc.id,
+
+
+          tripId:tripDoc.id,
+
+
+          tripName:
+            tripDoc.data().title,
+
+
+
+          ...(regDoc.data()),
+
+
+
+        });
+
+
+
+      }
+
+    );
+
+
+
+  }
+
+
+
+
+  return registrations;
+
+
+}
+
+
+
+
+
+
+
+// =================================================
+// PAYMENT MANAGEMENT
+// =================================================
+
+
 
 export async function updatePaymentStatus(
 
-  tripId: string,
+  tripId:string,
 
-  registrationId: string,
+  registrationId:string,
 
-  status: PaymentStatus
+  status:PaymentStatus
 
-) {
+){
 
 
-  const ref = doc(
-    db,
-    "trips",
-    tripId,
-    "registrations",
-    registrationId
-  );
+  const ref =
+    doc(
+
+      db,
+
+      "trips",
+
+      tripId,
+
+      "registrations",
+
+      registrationId
+
+    );
 
 
 
@@ -267,43 +498,164 @@ export async function updatePaymentStatus(
 
     {
 
-      "payment.status": status,
 
-      ...(status === "verified"
-        ? {
-            verifiedAt: serverTimestamp(),
-          }
-        : {}),
+      "payment.status":
+        status,
+
+
+
+      ...(status==="verified"
+
+      ?
+
+      {
+
+        verifiedAt:
+          serverTimestamp(),
+
+      }
+
+      :
+
+      {})
+
+
 
     }
 
   );
 
+
 }
 
 
 
-// Delete registration
+
+
+
+
+export async function updateAdvancePayment(
+
+  tripId:string,
+
+  registrationId:string,
+
+  status:PaymentStage
+
+){
+
+
+  return updateDoc(
+
+    doc(
+
+      db,
+
+      "trips",
+
+      tripId,
+
+      "registrations",
+
+      registrationId
+
+    ),
+
+
+    {
+
+      "payment.advanceStatus":
+        status
+
+    }
+
+  );
+
+
+}
+
+
+
+
+
+
+
+export async function updateRemainingPayment(
+
+  tripId:string,
+
+  registrationId:string,
+
+  status:PaymentStage
+
+){
+
+
+  return updateDoc(
+
+    doc(
+
+      db,
+
+      "trips",
+
+      tripId,
+
+      "registrations",
+
+      registrationId
+
+    ),
+
+
+    {
+
+      "payment.remainingStatus":
+        status
+
+    }
+
+  );
+
+
+}
+
+
+
+
+
+
+
+// =================================================
+// DELETE REGISTRATION
+// =================================================
+
+
 
 export async function deleteRegistration(
 
-  tripId: string,
+  tripId:string,
 
-  registrationId: string
+  registrationId:string
 
-) {
+){
 
 
   return deleteDoc(
 
     doc(
+
       db,
+
       "trips",
+
       tripId,
+
       "registrations",
+
       registrationId
+
     )
 
   );
-
-}
+  }
