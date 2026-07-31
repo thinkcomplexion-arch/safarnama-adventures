@@ -46,10 +46,14 @@ const [sectionContent, setSectionContent] = useState("");
   async function handleAddDay() {
   try {
     await addItineraryDay(tripId, {
-      day: days.length + 1,
-      coverImage: "",
-      sections: [],
-    });
+  day: days.length + 1,
+
+  title: `Day ${days.length + 1}`,
+
+  coverImage: "",
+
+  sections: [],
+});
 
     const data = await getItinerary(tripId);
     setDays(data);
@@ -346,14 +350,40 @@ setEditingCoverDay(null);
 
                   <div>
 
-                    <h2 className="text-2xl font-bold">
-                      Day {day.day}
-                    </h2>
+                    <div className="space-y-3">
 
+  <p className="text-sm font-semibold text-primary">
+    Day {day.day}
+  </p>
 
-                    <p className="text-muted-foreground">
-                      {day.sections.length} Sections Added
-                    </p>
+  <input
+    defaultValue={day.title}
+    placeholder="Enter day title"
+    onBlur={async (e) => {
+
+      if (!day.id) return;
+
+      await updateItineraryDay(
+        tripId,
+        day.id,
+        {
+          title: e.target.value,
+        }
+      );
+
+      const data = await getItinerary(tripId);
+
+      setDays(data);
+
+    }}
+    className="w-full rounded-xl border p-3 text-2xl font-bold"
+  />
+
+  <p className="text-muted-foreground">
+    {day.sections.length} Sections Added
+  </p>
+
+</div>
 
 
                   </div>
