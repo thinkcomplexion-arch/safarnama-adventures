@@ -42,9 +42,9 @@ export function Tours() {
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent opacity-80" />
                 <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
                   <Badge tone={tour.difficulty as "Easy" | "Moderate" | "Challenging" | "neutral"}>{tour.difficulty}</Badge>
-                  <span className="glass rounded-full px-3 py-1 text-xs font-semibold text-foreground">
-                    {tour.price}
-                  </span>
+                  <span className="glass rounded-full px-3 py-1 text-sm font-bold text-foreground">
+  ₹{Number(tour.price).toLocaleString("en-IN")}
+</span>
                 </div>
                 <p className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary-foreground">
                   <MapPin className="h-3.5 w-3.5" />
