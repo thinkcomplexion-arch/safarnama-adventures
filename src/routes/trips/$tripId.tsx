@@ -174,194 +174,251 @@ setLoading(false);
     </span>
   </button>
 
-   {showItinerary && (
-  <div className="border-t p-8">
-
-    <div className="space-y-10">
-
-      {itinerary.map((day, index) => (
-
+             {showItinerary && (
   <div
-    key={day.id}
     className="
-      group
-      relative
-      overflow-hidden
-      rounded-[50px]
-      border
-      border-white/30
-      shadow-2xl
-      transition-all
+      fixed
+      inset-0
+      z-50
+      h-screen
+      w-screen
+      overflow-y-auto
+      snap-y
+      snap-mandatory
+      bg-black
+      p-4
+      md:p-8
+      animate-in
+      fade-in
       duration-700
-      hover:-translate-y-3
     "
   >
 
-    {/* Background Image */}
-    <div className="absolute inset-0">
+    {/* Close Button */}
+    <button
+      onClick={() => setShowItinerary(false)}
+      className="
+        fixed
+        right-6
+        top-6
+        z-[60]
+        rounded-full
+        bg-white/20
+        px-6
+        py-3
+        text-white
+        backdrop-blur-xl
+        transition
+        hover:bg-white/40
+      "
+    >
+      ✕ Close
+    </button>
 
-      {day.coverImage && (
-        <img
-          src={day.coverImage}
-          alt={`Day ${day.day}`}
+
+    <div className="space-y-10">
+
+      {itinerary.map((day) => (
+
+        <div
+          key={day.id}
           className="
-            h-full
+            group
+            relative
+            flex
+            min-h-[calc(100vh-4rem)]
             w-full
-            object-cover
-            transition
-            duration-[2000ms]
-            group-hover:scale-110
+            snap-start
+            overflow-hidden
+            rounded-[60px]
+            border
+            border-white/20
+            shadow-[0_40px_120px_rgba(0,0,0,0.5)]
+            transition-all
+            duration-1000
           "
-        />
-      )}
+        >
 
-      <div
-        className="
-          absolute
-          inset-0
-          bg-gradient-to-br
-          from-indigo-900/80
-          via-purple-900/60
-          to-cyan-900/70
-        "
-      />
+          {/* Background Image */}
+          <div className="absolute inset-0">
 
-    </div>
+            {day.coverImage && (
+              <img
+                src={day.coverImage}
+                alt={`Day ${day.day}`}
+                className="
+                  h-full
+                  w-full
+                  object-cover
+                  transition
+                  duration-[2500ms]
+                  group-hover:scale-110
+                "
+              />
+            )}
 
+            <div
+              className="
+                absolute
+                inset-0
+                bg-gradient-to-br
+                from-indigo-950/90
+                via-purple-900/70
+                to-cyan-900/80
+              "
+            />
 
-
-    {/* Content */}
-    <div className="relative z-10 p-8 md:p-12 text-white">
-
-
-      {/* Day Badge */}
-
-      <div
-        className="
-          inline-flex
-          rounded-full
-          bg-white/20
-          px-6
-          py-3
-          backdrop-blur-xl
-          shadow-lg
-          animate-pulse
-        "
-      >
-        🌄 DAY {day.day}
-      </div>
+          </div>
 
 
-
-      <h2
-        className="
-          mt-6
-          text-5xl
-          font-black
-          md:text-7xl
-          drop-shadow-2xl
-        "
-      >
-        {day.title || `Day ${day.day}`}
-      </h2>
-
-
-      <p className="mt-4 max-w-2xl text-lg text-white/90">
-        Discover the next chapter of your adventure.
-      </p>
-
-
-
-
-      {/* Sections */}
-
-      <div className="mt-12 space-y-8">
-
-
-        {day.sections.map((section) => (
-
+          {/* Content */}
           <div
-            key={section.id}
             className="
-              border-b
-              border-white/20
-              pb-6
-              last:border-none
+              relative
+              z-10
+              flex
+              w-full
+              flex-col
+              justify-center
+              p-8
+              text-white
+              md:p-16
             "
           >
 
-
-            <div className="flex items-center gap-4">
-
-              <div
-                className="
-                  flex
-                  h-14
-                  w-14
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  bg-white/20
-                  text-3xl
-                  backdrop-blur-xl
-                "
-              >
-                {getSectionIcon(section.type)}
-              </div>
-
-
-              <div>
-
-                <h3 className="text-2xl font-bold">
-                  {section.title}
-                </h3>
-
-
-                <p
-                  className="
-                    text-sm
-                    uppercase
-                    tracking-widest
-                    text-white/70
-                  "
-                >
-                  {section.type}
-                </p>
-
-              </div>
-
-
+            {/* Day Badge */}
+            <div
+              className="
+                inline-flex
+                w-fit
+                rounded-full
+                bg-white/20
+                px-6
+                py-3
+                backdrop-blur-xl
+                shadow-lg
+                animate-pulse
+              "
+            >
+              🌄 DAY {day.day}
             </div>
+
+
+            <h2
+              className="
+                mt-6
+                text-5xl
+                font-black
+                leading-tight
+                drop-shadow-2xl
+                md:text-8xl
+              "
+            >
+              {day.title || `Day ${day.day}`}
+            </h2>
 
 
             <p
               className="
-                mt-4
+                mt-5
+                max-w-3xl
                 text-lg
-                leading-relaxed
                 text-white/90
+                md:text-2xl
               "
             >
-              {section.content}
+              Discover the next chapter of your adventure.
             </p>
+
+
+
+            {/* Sections */}
+            <div className="mt-12 space-y-10">
+
+              {day.sections.map((section) => (
+
+                <div
+                  key={section.id}
+                  className="
+                    border-b
+                    border-white/20
+                    pb-8
+                    last:border-none
+                  "
+                >
+
+                  <div className="flex items-center gap-5">
+
+                    <div
+                      className="
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
+                        rounded-3xl
+                        bg-white/20
+                        text-4xl
+                        backdrop-blur-xl
+                      "
+                    >
+                      {getSectionIcon(section.type)}
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="text-3xl font-bold">
+                        {section.title || "Untitled Section"}
+                      </h3>
+
+
+                      <p
+                        className="
+                          mt-1
+                          text-sm
+                          uppercase
+                          tracking-widest
+                          text-white/70
+                        "
+                      >
+                        {section.type}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <p
+                    className="
+                      mt-5
+                      text-lg
+                      leading-loose
+                      text-white/90
+                      md:text-xl
+                    "
+                  >
+                    {section.content}
+                  </p>
+
+
+                </div>
+
+              ))}
+
+            </div>
 
 
           </div>
 
-        ))}
 
+        </div>
 
-      </div>
-
-
-    </div>
-
-
-  </div>
-
-))}
+      ))}
 
     </div>
+
 
   </div>
 )}
