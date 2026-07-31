@@ -1,17 +1,24 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "@/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { toast } from "sonner";
+import type { Trip } from "@/services/trips";
+import { updateTrip } from "@/services/trips";
+
 
 interface CreateTripDrawerProps {
   open: boolean;
   onClose: () => void;
+  trip?: Trip | null;
+  onSaved?: () => void;
 }
 
 export function CreateTripDrawer({
   open,
   onClose,
+  trip,
+  onSaved,
 }: CreateTripDrawerProps) {
 
   const [loading, setLoading] = useState(false);
@@ -26,7 +33,22 @@ export function CreateTripDrawer({
     status: "draft",
   });
 
+useEffect(() => {
 
+  if (!trip) return;
+
+  setForm({
+    title: trip.title || "",
+    location: trip.location || "",
+    price: String(trip.price || ""),
+    duration: trip.duration || "",
+    season: trip.season || "",
+    description: trip.description || "",
+    status: trip.status || "draft",
+  });
+
+}, [trip]);
+  
   const updateField = (
     field: string,
     value: string
@@ -49,6 +71,35 @@ export function CreateTripDrawer({
     try {
 
       setLoading(true);
+      if (trip) {
+
+  await updateTrip(trip.id, {
+
+    title: form.title,
+
+    location: form.location,
+
+    price: Number(form.price),
+
+    duration: form.duration,
+
+    season: form.season,
+
+    description: form.description,
+
+    status: form.status as any,
+
+  });
+
+  toast.success("Trip updated successfully 🎉");
+
+  onSaved?.();
+
+  onClose();
+
+  return;
+
+      }
 
 
       await addDoc(collection(db, "trips"), {
