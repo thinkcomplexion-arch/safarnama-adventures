@@ -325,40 +325,47 @@ const [step, setStep] = useState(1);
 
 
 
-          <button
+          {step === 1 && (
 
-            disabled={submitting}
+  <button
+    disabled={submitting}
+    onClick={handleSubmit}
 
-            onClick={handleSubmit}
+    className="
+      mt-8
+      rounded-xl
+      bg-primary
+      px-6
+      py-3
+      text-white
+    "
+  >
 
-            className="
-              mt-8
-              rounded-xl
-              bg-primary
-              px-6
-              py-3
-              text-white
-            "
+    {
+      submitting
+      ?
+      "Submitting..."
+      :
+      "Proceed to Payment"
+    }
 
-          >
+  </button>
 
-            {
-              submitting
-              ?
-              "Submitting..."
-              :
-              "Proceed to Payment"
-            }
-
-          </button>
-
-           {step === 2 && (
-  <PaymentStep
-    tripId={tripId}
-    tripPrice={trip?.price || 0}
-  />
 )}
 
+
+{step === 2 && (
+
+  <div className="mt-8">
+
+    <PaymentStep
+      tripId={tripId}
+      tripPrice={trip?.price || 0}
+    />
+
+  </div>
+
+)}
           <Link
 
             to="/trips/$tripId"
