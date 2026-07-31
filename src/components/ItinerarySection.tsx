@@ -49,22 +49,26 @@ export function ItinerarySectionView({ section }: Props) {
   return (
 
     <div
-      className={`
-        group
-        relative
-        overflow-hidden
-        rounded-3xl
-        bg-gradient-to-br
-        ${styles.gradient}
-        p-6
-        transition-all
-        duration-700
-        animate-in
-        fade-in
-        slide-in-from-bottom-5
-      `}
-    >
-
+  className={`
+    group
+    relative
+    overflow-hidden
+    rounded-3xl
+    bg-gradient-to-br
+    ${styles.gradient}
+    backdrop-blur-xl
+    bg-white/20
+    border
+    border-white/20
+    shadow-xl
+    p-6
+    transition-all
+    duration-700
+    animate-in
+    fade-in
+    slide-in-from-bottom-5
+  `}
+>
 
       {/* Floating Glow */}
       <div
