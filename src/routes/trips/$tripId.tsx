@@ -165,29 +165,59 @@ setLoading(false);
     >
       {/* Cover Image */}
       {day.coverImage && (
-        <img
-          src={day.coverImage}
-          alt={`Day ${day.day}`}
-          className="h-72 w-full object-cover"
-        />
+        <div className="relative">
+
+  <img
+    src={day.coverImage}
+    alt={`Day ${day.day}`}
+    className="h-80 w-full object-cover transition-transform duration-700 hover:scale-105"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+</div>
       )}
 
       <div className="p-8">
 
-        <div className="mb-6 inline-flex rounded-full bg-primary px-5 py-2 text-white">
-          Day {day.day}
-        </div>
+        <div className="relative -mt-24 z-10">
+
+  <div className="inline-flex rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-lg font-bold text-white shadow-2xl">
+    Day {day.day}
+  </div>
+
+  <h2 className="mt-5 text-4xl font-extrabold text-slate-900">
+    {day.title || `Day ${day.day}`}
+  </h2>
+
+</div>
 
         <div className="space-y-6">
           {day.sections.map((section) => (
             <div
-              key={section.id}
-              className="rounded-2xl border bg-slate-50 p-6 transition-all hover:shadow-lg"
-            >
-              <h4 className="text-xl font-bold">
-                {section.title || "Untitled Section"}
-              </h4>
+  key={section.id}
+  className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+>
+              <div className="mb-4 flex items-center gap-3">
 
+  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-2xl text-white shadow-lg">
+
+    {section.type === "places" && "📍"}
+    {section.type === "gallery" && "🖼️"}
+    {section.type === "meals" && "🍽️"}
+    {section.type === "stay" && "🏨"}
+    {section.type === "transport" && "🚌"}
+    {section.type === "highlights" && "⭐"}
+    {section.type === "tips" && "💡"}
+    {(!section.type || section.type === "description") && "✨"}
+
+  </div>
+
+  <h4 className="text-2xl font-bold text-slate-900">
+    {section.title || "Untitled Section"}
+  </h4>
+
+</div>
               <p className="mt-3 whitespace-pre-wrap text-muted-foreground leading-relaxed">
                 {section.content}
               </p>
