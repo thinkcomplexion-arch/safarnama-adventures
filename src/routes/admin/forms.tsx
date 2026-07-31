@@ -11,6 +11,7 @@ import {
 
 import {
   saveTripForm,
+  getTripForm,
   type RegistrationField,
 } from "@/services/registration";
 
@@ -24,6 +25,9 @@ function RegistrationFormsPage() {
 
   const [trips, setTrips] = useState<Trip[]>([]);
   const [selectedTrip, setSelectedTrip] = useState("");
+  const [formExists, setFormExists] = useState(false);
+
+const [loadingForm, setLoadingForm] = useState(false);
 
   const [fields, setFields] = useState<RegistrationField[]>([
     {
@@ -81,7 +85,41 @@ function RegistrationFormsPage() {
     ]);
 
   }
+async function loadTripForm(tripId: string) {
 
+  setLoadingForm(true);
+
+  const form = await getTripForm(tripId);
+
+  if (form) {
+
+    setFields(form.fields);
+
+    setAdvancePercentage(form.advancePercentage);
+
+    setUpiId(form.upiId);
+
+    setWhatsappNumber(form.paymentVerificationWhatsApp);
+
+    setFormExists(true);
+
+  } else {
+
+    setFormExists(false);
+
+    setFields([]);
+
+    setAdvancePercentage(50);
+
+    setUpiId("");
+
+    setWhatsappNumber("");
+
+  }
+
+  setLoadingForm(false);
+
+}
 
 
   function removeField(id:string){
@@ -181,9 +219,17 @@ function RegistrationFormsPage() {
 
             <select
               value={selectedTrip}
-              onChange={(e)=>
-                setSelectedTrip(e.target.value)
-              }
+              onChange={async (e) => {
+
+  const tripId = e.target.value;
+
+  setSelectedTrip(tripId);
+
+  if (tripId) {
+    await loadTripForm(tripId);
+  }
+
+}}
               className="mt-2 w-full rounded-xl border p-3"
             >
 
