@@ -27,6 +27,7 @@ export function CreateTripDrawer({
     title: "",
     location: "",
     price: "",
+    image: "",
     duration: "",
     season: "",
     description: "",
@@ -40,6 +41,7 @@ useEffect(() => {
   setForm({
     title: trip.title || "",
     location: trip.location || "",
+    image: trip.image || "",
     price: String(trip.price || ""),
     duration: trip.duration || "",
     season: trip.season || "",
@@ -77,6 +79,8 @@ useEffect(() => {
 
     title: form.title,
 
+    image: form.image,
+
     location: form.location,
 
     price: Number(form.price),
@@ -105,6 +109,8 @@ useEffect(() => {
       await addDoc(collection(db, "trips"), {
 
         title: form.title,
+        
+        image: form.image,
 
         location: form.location,
 
@@ -129,6 +135,7 @@ useEffect(() => {
       setForm({
         title: "",
         location: "",
+        image: "",
         price: "",
         duration: "",
         season: "",
@@ -211,7 +218,28 @@ useEffect(() => {
             placeholder="Location"
             className="w-full rounded-xl border px-4 py-3"
           />
-
+          <input
+  value={form.image}
+  onChange={(e) => updateField("image", e.target.value)}
+  placeholder="Image URL"
+  className="w-full rounded-xl border px-4 py-3"
+/>
+            <div className="overflow-hidden rounded-xl border">
+  {form.image ? (
+    <img
+      src={form.image}
+      alt="Trip Preview"
+      className="h-56 w-full object-cover"
+      onError={(e) => {
+        e.currentTarget.style.display = "none";
+      }}
+    />
+  ) : (
+    <div className="flex h-56 items-center justify-center text-muted-foreground">
+      No image selected
+    </div>
+  )}
+</div>
 
           <input
             type="number"
