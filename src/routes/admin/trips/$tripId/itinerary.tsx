@@ -77,8 +77,6 @@ const [sectionContent, setSectionContent] = useState("");
     const newSection = {
   id: crypto.randomUUID(),
 
-  type: undefined,
-
   title: "",
 
   content: "",
