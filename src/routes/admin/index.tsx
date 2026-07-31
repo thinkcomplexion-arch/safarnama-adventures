@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAuth } from "@/context/AuthContext";
@@ -78,18 +78,35 @@ if (profile.role !== "owner" || profile.active !== true) {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
         <div className="rounded-xl border bg-card p-6 shadow">
-          <h2 className="font-semibold">
-            Trips
-          </h2>
+  <h2 className="font-semibold">
+    Trips
+  </h2>
 
-          <p className="mt-2 text-3xl font-bold">
-            {trips.length}
-          </p>
+  <p className="mt-2 text-3xl font-bold">
+    {trips.length}
+  </p>
 
-          <p className="text-sm text-muted-foreground">
-            Total trips created
-          </p>
-        </div>
+  <p className="text-sm text-muted-foreground">
+    Total trips created
+  </p>
+
+  <div className="mt-4 space-y-2">
+    {trips.map((trip) => (
+      <div
+        key={trip.id}
+        className="rounded-lg border p-3"
+      >
+        <p className="font-medium">
+          {trip.title}
+        </p>
+
+        <p className="text-sm text-muted-foreground">
+          {trip.location}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
 
 
         <div className="rounded-xl border bg-card p-6 shadow">
