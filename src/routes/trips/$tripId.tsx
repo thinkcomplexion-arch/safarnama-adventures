@@ -339,7 +339,12 @@ hover:shadow-cyan-200
 
          
     </div>
-  )}
+
+        </div>
+
+      </div>
+
+  ))}
 
 </div>
 
