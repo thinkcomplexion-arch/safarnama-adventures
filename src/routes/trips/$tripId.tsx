@@ -276,6 +276,8 @@ setLoading(false);
 
   </div>
 )}
+     </div>
+     </div>
 
             {/* Booking Card */}
             <div className="h-fit rounded-3xl border p-6 shadow-lg">
@@ -302,4 +304,4 @@ setLoading(false);
       <Footer />
     </>
   );
-        }
+}
