@@ -13,8 +13,21 @@ import { db } from "@/firebase";
 
 export interface ItinerarySection {
   id: string;
+
+  type?:
+    | "description"
+    | "places"
+    | "gallery"
+    | "meals"
+    | "stay"
+    | "transport"
+    | "highlights"
+    | "tips";
+
   title: string;
+
   content: string;
+
   images?: string[];
 }
 
