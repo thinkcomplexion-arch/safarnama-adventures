@@ -7,6 +7,7 @@ import {
   updateItineraryDay,
   deleteItineraryDay,
   type ItineraryDay,
+  type ItinerarySection,
 } from "@/services/itinerary";
 import { Plus, CalendarDays, Image, Pencil, Trash2 } from "lucide-react";
 
@@ -29,7 +30,7 @@ const [sectionTitle, setSectionTitle] = useState("");
 const [sectionContent, setSectionContent] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [editingCoverDay, setEditingCoverDay] = useState<string | null>(null);
-  const [sectionType, setSectionType] = useState<string>("");
+  const [sectionType, setSectionType] = useState<NonNullable<ItinerarySection["type"]> | "">("");
   
   useEffect(() => {
     async function load() {
@@ -567,7 +568,9 @@ setEditingCoverDay(null);
 
       <select
   value={sectionType}
-  onChange={(e) => setSectionType(e.target.value)}
+  onChange={(e) =>
+    setSectionType(e.target.value as NonNullable<ItinerarySection["type"]> | "")
+  }
   className="w-full rounded-xl border p-3"
 >
   <option value="">Default Section</option>

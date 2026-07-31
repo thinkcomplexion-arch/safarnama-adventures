@@ -41,7 +41,7 @@ export function Tours() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent opacity-80" />
                 <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
-                  <Badge tone={tour.difficulty}>{tour.difficulty}</Badge>
+                  <Badge tone={tour.difficulty as "Easy" | "Moderate" | "Challenging" | "neutral"}>{tour.difficulty}</Badge>
                   <span className="glass rounded-full px-3 py-1 text-xs font-semibold text-foreground">
                     {tour.price}
                   </span>
