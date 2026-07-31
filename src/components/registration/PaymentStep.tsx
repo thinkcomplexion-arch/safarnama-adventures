@@ -8,11 +8,8 @@ import {
 
 
 interface PaymentStepProps {
-
   tripId: string;
-
   tripPrice: number;
-
 }
 
 
@@ -26,12 +23,12 @@ export function PaymentStep({
     useState<TripFormConfig | null>(null);
 
 
-  const [qrCode, setQrCode] =
-    useState<string>("");
-
-
   const [amount, setAmount] =
     useState<number>(0);
+
+
+  const [upiLink, setUpiLink] =
+    useState<string>("");
 
 
 
@@ -39,10 +36,8 @@ export function PaymentStep({
 
     async function loadPaymentData() {
 
-
       const form =
         await getTripForm(tripId);
-
 
 
       if (!form) {
@@ -50,12 +45,8 @@ export function PaymentStep({
       }
 
 
-
       setConfig(form);
 
-
-
-      // Calculate advance amount
 
       const advanceAmount =
         Math.round(
@@ -67,38 +58,38 @@ export function PaymentStep({
 
 
 
-      // Generate QR only when UPI exists
+      if (form.upiId) {
 
-      if(form.upiId){
-
-
-        const upiLink =
+        const link =
           `upi://pay?pa=${form.upiId}&pn=Safarnama&am=${advanceAmount}&cu=INR`;
 
+        setUpiLink(link);
+
+      }
+
+    }
 
 
-        l
+    loadPaymentData();
+
+  }, [tripId, tripPrice]);
 
 
 
-  function copyUPI(){
 
-    if(config?.upiId){
+  function copyUPI() {
+
+    if (config?.upiId) {
 
       navigator.clipboard.writeText(
         config.upiId
       );
 
-
-      alert(
-        "UPI ID copied"
-      );
+      alert("UPI ID copied");
 
     }
 
   }
-
-
 
 
 
@@ -113,10 +104,7 @@ export function PaymentStep({
     ">
 
 
-      <h2 className="
-        text-2xl
-        font-bold
-      ">
+      <h2 className="text-2xl font-bold">
         Payment
       </h2>
 
@@ -131,26 +119,31 @@ export function PaymentStep({
 
 
 
-
       {
         config?.upiId
+
         ?
 
         <>
 
-          {
-            qrCode && (
 
-              <img
-                src={qrCode}
-                alt="Payment QR Code"
-                className="
-                  mx-auto
-                  h-64
-                  w-64
-                  rounded-xl
-                "
-              />
+          {
+            upiLink && (
+
+              <div className="
+                flex
+                justify-center
+                rounded-xl
+                bg-white
+                p-4
+              ">
+
+                <QRCode
+                  value={upiLink}
+                  size={220}
+                />
+
+              </div>
 
             )
           }
@@ -173,7 +166,6 @@ export function PaymentStep({
               flex
               gap-2
             ">
-
 
               <input
                 value={config.upiId}
@@ -202,11 +194,11 @@ export function PaymentStep({
 
             </div>
 
-
           </div>
 
 
         </>
+
 
         :
 
@@ -215,6 +207,7 @@ export function PaymentStep({
         </p>
 
       }
+
 
 
 
@@ -231,8 +224,9 @@ export function PaymentStep({
       </button>
 
 
+
     </div>
 
   );
 
-          }
+}
