@@ -228,11 +228,11 @@ setLoading(false);
             group
             relative
             flex
-            min-h-[calc(100vh-4rem)]
+            min-h-screen
             w-full
             snap-start
             overflow-hidden
-            rounded-[60px]
+            rounded-3xl
             border
             border-white/20
             shadow-[0_40px_120px_rgba(0,0,0,0.5)]
