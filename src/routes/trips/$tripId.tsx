@@ -60,6 +60,27 @@ setLoading(false);
     );
   }
 
+  function getSectionIcon(type?: string) {
+  switch (type) {
+    case "places":
+      return "📍";
+    case "gallery":
+      return "🖼️";
+    case "meals":
+      return "🍽️";
+    case "stay":
+      return "🏨";
+    case "transport":
+      return "🚌";
+    case "highlights":
+      return "⭐";
+    case "tips":
+      return "💡";
+    default:
+      return "✨";
+  }
+  }
+
 
   return (
     <>
@@ -160,44 +181,65 @@ setLoading(false);
      <div className="space-y-10">
   {itinerary.map((day) => (
     <div
-      key={day.id}
-      className="overflow-hidden rounded-3xl border bg-white shadow-xl"
-    >
+  key={day.id}
+  className="relative overflow-hidden rounded-[40px] bg-gradient-to-br from-cyan-50 via-white to-purple-50 shadow-2xl border border-white/60"
+>
       {/* Cover Image */}
       {day.coverImage && (
-        <div className="relative">
+  <div className="relative h-[420px] overflow-hidden">
 
-  <img
-    src={day.coverImage}
-    alt={`Day ${day.day}`}
-    className="h-80 w-full object-cover transition-transform duration-700 hover:scale-105"
-  />
+    <img
+      src={day.coverImage}
+      alt={`Day ${day.day}`}
+      className="h-full w-full object-cover transition duration-700 hover:scale-110"
+    />
 
-  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-</div>
-      )}
+
+    <div className="absolute bottom-8 left-8 text-white">
+
+      <span className="inline-flex rounded-full bg-white/20 px-5 py-2 text-sm font-semibold backdrop-blur-md">
+        🌄 Day {day.day}
+      </span>
+
+
+      <h2 className="mt-4 text-4xl font-extrabold md:text-5xl">
+        {day.title || `Day ${day.day}`}
+      </h2>
+
+    </div>
+
+  </div>
+)}
 
       <div className="p-8">
 
-        <div className="relative -mt-24 z-10">
-
-  <div className="inline-flex rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-lg font-bold text-white shadow-2xl">
-    Day {day.day}
-  </div>
-
-  <h2 className="mt-5 text-4xl font-extrabold text-slate-900">
-    {day.title || `Day ${day.day}`}
-  </h2>
-
-</div>
+        
 
         <div className="space-y-6">
           {day.sections.map((section) => (
             <div
   key={section.id}
-  className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
->
+      className={`
+  relative overflow-hidden rounded-[32px] p-8 shadow-xl backdrop-blur-md
+  transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl
+  ${
+    section.type === "places"
+      ? "bg-gradient-to-br from-blue-50 to-cyan-100 border-blue-200"
+      : section.type === "meals"
+      ? "bg-gradient-to-br from-orange-50 to-yellow-100 border-orange-200"
+      : section.type === "stay"
+      ? "bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200"
+      : section.type === "highlights"
+      ? "bg-gradient-to-br from-yellow-50 to-amber-100 border-yellow-200"
+      : section.type === "tips"
+      ? "bg-gradient-to-br from-green-50 to-emerald-100 border-green-200"
+      : section.type === "transport"
+      ? "bg-gradient-to-br from-slate-50 to-blue-100 border-slate-200"
+      : "bg-gradient-to-br from-white to-cyan-50 border-white"
+  }
+`}
               <div className="mb-4 flex items-center gap-3">
 
   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-2xl text-white shadow-lg">
