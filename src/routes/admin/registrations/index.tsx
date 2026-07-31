@@ -11,6 +11,8 @@ import {
 import {
   getTripRegistrations,
   updatePaymentStatus,
+  updateAdvancePayment,
+  updateRemainingPayment,
   deleteRegistration,
   type Registration,
 } from "@/services/registration";
@@ -25,32 +27,31 @@ export const Route = createFileRoute("/admin/registration/")({
 function RegistrationManagement() {
 
 
-  const [trips, setTrips] =
+  const [trips,setTrips] =
     useState<Trip[]>([]);
 
 
-  const [selectedTrip, setSelectedTrip] =
+  const [selectedTrip,setSelectedTrip] =
     useState<Trip | null>(null);
 
 
-  const [registrations, setRegistrations] =
+  const [registrations,setRegistrations] =
     useState<Registration[]>([]);
 
 
-  const [loading, setLoading] =
+  const [loading,setLoading] =
     useState(true);
 
 
 
 
 
-  useEffect(() => {
+  useEffect(()=>{
 
-    async function load() {
+    async function load(){
 
       const data =
         await getAllTrips();
-
 
       setTrips(data);
 
@@ -61,15 +62,14 @@ function RegistrationManagement() {
 
     load();
 
-  }, []);
+  },[]);
 
 
 
 
 
 
-
-  async function openTrip(trip: Trip) {
+  async function openTrip(trip:Trip){
 
     setSelectedTrip(trip);
 
@@ -89,23 +89,37 @@ function RegistrationManagement() {
 
 
 
+  async function refresh(){
+
+    if(selectedTrip){
+
+      await openTrip(selectedTrip);
+
+    }
+
+  }
+
+
+
+
+
 
   async function verifyPayment(
-    registrationId: string
-  ) {
+    id:string
+  ){
 
-    if (!selectedTrip)
+    if(!selectedTrip)
       return;
 
 
     await updatePaymentStatus(
       selectedTrip.id,
-      registrationId,
+      id,
       "verified"
     );
 
 
-    await openTrip(selectedTrip);
+    refresh();
 
   }
 
@@ -115,22 +129,96 @@ function RegistrationManagement() {
 
 
 
+  async function rejectPayment(
+    id:string
+  ){
 
-  async function removeRegistration(
-    id: string
-  ) {
-
-    if (!selectedTrip)
+    if(!selectedTrip)
       return;
 
 
-    const confirmDelete =
+    await updatePaymentStatus(
+      selectedTrip.id,
+      id,
+      "rejected"
+    );
+
+
+    refresh();
+
+  }
+
+
+
+
+
+
+
+  async function markAdvancePaid(
+    id:string
+  ){
+
+    if(!selectedTrip)
+      return;
+
+
+    await updateAdvancePayment(
+      selectedTrip.id,
+      id,
+      "paid"
+    );
+
+
+    refresh();
+
+  }
+
+
+
+
+
+
+
+  async function markRemainingPaid(
+    id:string
+  ){
+
+    if(!selectedTrip)
+      return;
+
+
+    await updateRemainingPayment(
+      selectedTrip.id,
+      id,
+      "paid"
+    );
+
+
+    refresh();
+
+  }
+
+
+
+
+
+
+
+  async function removeRegistration(
+    id:string
+  ){
+
+    if(!selectedTrip)
+      return;
+
+
+    const ok =
       window.confirm(
         "Delete this registration?"
       );
 
 
-    if (!confirmDelete)
+    if(!ok)
       return;
 
 
@@ -141,7 +229,82 @@ function RegistrationManagement() {
     );
 
 
-    await openTrip(selectedTrip);
+    refresh();
+
+  }
+
+
+
+
+
+
+
+  function getContactData(
+    reg:Registration
+  ){
+
+    let phone = "";
+    let email = "";
+    let name = "";
+
+
+    Object.entries(
+      reg.responses
+    ).forEach(([key,value])=>{
+
+
+      const valueString =
+        String(value);
+
+
+
+      if(
+        key.toLowerCase()
+        .includes("name")
+      ){
+
+        name=valueString;
+
+      }
+
+
+
+      if(
+        key.toLowerCase()
+        .includes("phone")
+        ||
+        key.toLowerCase()
+        .includes("mobile")
+        ||
+        key.toLowerCase()
+        .includes("whatsapp")
+      ){
+
+        phone=valueString;
+
+      }
+
+
+
+      if(
+        key.toLowerCase()
+        .includes("email")
+      ){
+
+        email=valueString;
+
+      }
+
+
+    });
+
+
+
+    return {
+      phone,
+      email,
+      name
+    };
 
   }
 
@@ -163,6 +326,7 @@ function RegistrationManagement() {
       ">
 
 
+
         <h1 className="
           text-3xl
           font-bold
@@ -176,6 +340,7 @@ function RegistrationManagement() {
 
 
 
+
         <div className="
           grid
           gap-8
@@ -184,9 +349,6 @@ function RegistrationManagement() {
 
 
 
-
-
-          {/* TRIPS */}
 
 
           <div>
@@ -204,10 +366,6 @@ function RegistrationManagement() {
 
 
 
-
-            <div>
-
-
             {
               loading
 
@@ -220,39 +378,36 @@ function RegistrationManagement() {
 
               :
 
-
-              trips.map(trip => (
+              trips.map(trip=>(
 
 
                 <button
 
                   key={trip.id}
 
-                  onClick={() =>
+                  onClick={()=>
                     openTrip(trip)
                   }
 
 
                   className={`
+                    block
                     w-full
                     border-b
                     p-4
                     text-left
-                    transition
                     hover:bg-muted
 
                     ${
-                      selectedTrip?.id === trip.id
+                      selectedTrip?.id===trip.id
                       ?
                       "bg-primary text-white"
                       :
                       ""
                     }
-
                   `}
 
                 >
-
 
                   <p className="font-semibold">
 
@@ -276,9 +431,6 @@ function RegistrationManagement() {
             }
 
 
-            </div>
-
-
           </div>
 
 
@@ -286,10 +438,6 @@ function RegistrationManagement() {
 
 
 
-
-
-
-          {/* REGISTRATIONS */}
 
 
 
@@ -306,161 +454,238 @@ function RegistrationManagement() {
             <>
 
 
-            <h2 className="
-              mb-6
-              text-2xl
-              font-bold
-            ">
+              <h2 className="
+                mb-6
+                text-2xl
+                font-bold
+              ">
 
-              {selectedTrip.title} Registrations
+                {selectedTrip.title} Registrations
 
-            </h2>
-
-
-
-
-
-            {
-              registrations.length === 0
-
-              ?
-
-              <p>
-                No registrations found.
-              </p>
-
-
-              :
-
-
-              registrations.map(reg => (
-
-
-                <div
-
-                  key={reg.id}
-
-                  className="
-                    border-b
-                    py-6
-                  "
-
-                >
-
-
-
-                  <h3 className="
-                    mb-4
-                    text-lg
-                    font-bold
-                  ">
-
-                    Customer Details
-
-                  </h3>
+              </h2>
 
 
 
 
 
-                  <div className="
-                    grid
-                    gap-3
-                    md:grid-cols-2
-                  ">
+              {
+                registrations.length===0
+
+                ?
+
+                <p>
+                  No registrations found.
+                </p>
 
 
-                  {
-                    Object.entries(
-                      reg.responses
-                    ).map(([key,value]) => (
+                :
 
 
-                      <p key={key}>
+                registrations.map(reg=>{
 
 
-                        <span className="font-semibold">
-
-                          {key}:
-
-                        </span>
+                  const contact =
+                    getContactData(reg);
 
 
+
+                  return (
+
+                  <div
+                    key={reg.id}
+                    className="
+                      border-b
+                      py-8
+                    "
+                  >
+
+
+
+                    <h3 className="
+                      mb-4
+                      text-xl
+                      font-bold
+                    ">
+
+                      Customer Details
+
+                    </h3>
+
+
+
+
+                    <div className="
+                      grid
+                      gap-3
+                      md:grid-cols-2
+                    ">
+
+
+                    {
+                      Object.entries(
+                        reg.responses
+                      ).map(([key,value])=>(
+
+
+                        <p key={key}>
+
+                          <b>
+                            {key}:
+                          </b>
+
+                          {" "}
+
+                          {
+                            typeof value==="boolean"
+                            ?
+                            value
+                            ?
+                            "Yes"
+                            :
+                            "No"
+                            :
+                            String(value)
+                          }
+
+                        </p>
+
+
+                      ))
+
+                    }
+
+
+                    </div>
+
+
+
+
+
+
+
+                    {
+                      contact.phone && (
+
+                        <a
+                          href={`https://wa.me/${contact.phone}`}
+                          target="_blank"
+                          className="
+                            mt-5
+                            inline-block
+                            rounded-lg
+                            bg-green-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+                        >
+
+                          WhatsApp
+
+                        </a>
+
+                      )
+                    }
+
+
+
+
+
+
+                    {
+                      contact.email && (
+
+                        <a
+                          href={`mailto:${contact.email}`}
+                          className="
+                            ml-3
+                            inline-block
+                            rounded-lg
+                            bg-blue-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+                        >
+
+                          Email
+
+                        </a>
+
+                      )
+                    }
+
+
+
+
+
+
+
+
+                    <div className="
+                      mt-6
+                      space-y-3
+                    ">
+
+
+
+                      <p>
+
+                        Total Amount:
                         {" "}
-
-                        {String(value)}
-
+                        ₹{reg.payment.totalAmount}
 
                       </p>
 
 
-                    ))
 
-                  }
+                      <p>
 
+                        Advance Amount:
+                        {" "}
+                        ₹{reg.payment.advanceAmount}
 
-                  </div>
-
-
-
-
+                      </p>
 
 
 
-                  <div className="
-                    mt-5
-                    flex
-                    flex-wrap
-                    gap-6
-                  ">
+                      <p>
+
+                        Payment Status:
+                        {" "}
+                        <b>
+                          {reg.payment.status}
+                        </b>
+
+                      </p>
 
 
 
-                    <p>
+                      <p>
 
-                      Payment:
+                        Advance:
+                        {" "}
+                        <b>
+                          {reg.payment.advanceStatus || "pending"}
+                        </b>
 
-                      {" "}
-
-                      <b>
-                        {reg.payment.status}
-                      </b>
-
-                    </p>
+                      </p>
 
 
 
+                      <p>
 
-                    <p>
+                        Remaining:
+                        {" "}
+                        <b>
+                          {reg.payment.remainingStatus || "pending"}
+                        </b>
 
-                      Advance:
-
-                      {" "}
-
-                      <b>
-                        {reg.payment.advanceStatus || "pending"}
-                      </b>
-
-                    </p>
+                      </p>
 
 
 
-
-                    <p>
-
-                      Remaining:
-
-                      {" "}
-
-                      <b>
-                        {reg.payment.remainingStatus || "pending"}
-                      </b>
-
-                    </p>
-
-
-
-                  </div>
+                    </div>
 
 
 
@@ -468,71 +693,168 @@ function RegistrationManagement() {
 
 
 
-
-                  <div className="
-                    mt-5
-                    flex
-                    flex-wrap
-                    gap-3
-                  ">
-
+                    <div className="
+                      mt-6
+                      flex
+                      flex-wrap
+                      gap-3
+                    ">
 
 
 
-                  {
-                    reg.payment.status !== "verified"
 
-                    &&
+                      {
+                        reg.payment.status !== "verified"
 
+                        &&
 
-                    <button
+                        <button
 
-                      onClick={() =>
-                        verifyPayment(reg.id)
+                          onClick={()=>
+                            verifyPayment(reg.id)
+                          }
+
+                          className="
+                            rounded-lg
+                            bg-green-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+
+                        >
+
+                          Verify Payment
+
+                        </button>
+
                       }
 
 
-                      className="
-                        rounded-lg
-                        bg-green-600
-                        px-4
-                        py-2
-                        text-white
-                      "
-
-                    >
-
-                      Verify Payment
-
-                    </button>
-
-                  }
 
 
 
+                      {
+                        reg.payment.status !== "rejected"
+
+                        &&
+
+                        <button
+
+                          onClick={()=>
+                            rejectPayment(reg.id)
+                          }
+
+                          className="
+                            rounded-lg
+                            bg-yellow-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+
+                        >
+
+                          Reject
+
+                        </button>
+
+                      }
 
 
 
-                  <button
-
-                    onClick={() =>
-                      removeRegistration(reg.id)
-                    }
 
 
-                    className="
-                      rounded-lg
-                      bg-red-600
-                      px-4
-                      py-2
-                      text-white
-                    "
 
-                  >
+                      {
+                        reg.payment.advanceStatus !== "paid"
 
-                    Delete
+                        &&
 
-                  </button>
+                        <button
+
+                          onClick={()=>
+                            markAdvancePaid(reg.id)
+                          }
+
+                          className="
+                            rounded-lg
+                            bg-purple-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+
+                        >
+
+                          Mark Advance Paid
+
+                        </button>
+
+                      }
+
+
+
+
+
+
+
+                      {
+                        reg.payment.remainingStatus !== "paid"
+
+                        &&
+
+                        <button
+
+                          onClick={()=>
+                            markRemainingPaid(reg.id)
+                          }
+
+                          className="
+                            rounded-lg
+                            bg-indigo-600
+                            px-4
+                            py-2
+                            text-white
+                          "
+
+                        >
+
+                          Mark Remaining Paid
+
+                        </button>
+
+                      }
+
+
+
+
+
+
+                      <button
+
+                        onClick={()=>
+                          removeRegistration(reg.id)
+                        }
+
+                        className="
+                          rounded-lg
+                          bg-red-600
+                          px-4
+                          py-2
+                          text-white
+                        "
+
+                      >
+
+                        Delete
+
+                      </button>
+
+
+
+                    </div>
+
 
 
 
@@ -540,20 +862,16 @@ function RegistrationManagement() {
                   </div>
 
 
+                  );
 
 
+                })
 
-                </div>
-
-
-              ))
-
-            }
+              }
 
 
 
             </>
-
 
 
             :
@@ -567,15 +885,11 @@ function RegistrationManagement() {
           }
 
 
-
           </div>
 
 
 
-
-
         </div>
-
 
 
 
@@ -586,4 +900,4 @@ function RegistrationManagement() {
 
   );
 
-                      }
+}
